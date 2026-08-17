@@ -197,6 +197,8 @@ Full notes: [analysis/leads.md](analysis/leads.md).
 | `images/01-seed-slot-grid.svg` | the 12-word seed grid, confirmed vs unknown |
 | `tools/oracle.py` | candidate checker, certified against the canonical BIP-0039 vector |
 | `tools/lead1_generator.py` | the lead-1 enumeration made executable: word pools, anchors, checksum filter, `--selftest` |
+| `tools/gpu_reference.py` | the GPU searcher's specification: index-to-candidate unranking and the address derivation, both self-tested |
+| `tools/gpu/keccak.cl` | Keccak-256 for the Ethereum address, specialised to the 64-byte public key |
 | `tools/fig_slots.py` | generates images/01-seed-slot-grid.svg from data/seed-slots.json |
 
 ## Sources
