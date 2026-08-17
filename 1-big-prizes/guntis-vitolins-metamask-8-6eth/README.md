@@ -135,7 +135,7 @@ English wordlist is exactly 1 in 16, as the format requires. Reproduced
    a sign the search needed to include metadata.
 6. The wallet was funded with exactly 10 ETH on 2020-02-12 from an exchange
    hot wallet, and the author has since sent 7 outgoing transactions from it,
-   between 2021-05 and 2024-06-04, totaling approximately 1.377 ETH, leaving
+   between 2021-05 and 2024-06-04, totaling 1.38745844574305538 ETH, leaving
    the balance checked above. He still holds and periodically uses this
    private key; a future balance change would not by itself mean anyone
    solved the puzzle.
@@ -196,6 +196,7 @@ Full notes: [analysis/leads.md](analysis/leads.md).
 | `analysis/leads.md` | full notes behind the 3 ranked leads |
 | `images/01-seed-slot-grid.svg` | the 12-word seed grid, confirmed vs unknown |
 | `tools/oracle.py` | candidate checker, certified against the canonical BIP-0039 vector |
+| `tools/lead1_generator.py` | the lead-1 enumeration made executable: word pools, anchors, checksum filter, `--selftest` |
 | `tools/fig_slots.py` | generates images/01-seed-slot-grid.svg from data/seed-slots.json |
 
 ## Sources
