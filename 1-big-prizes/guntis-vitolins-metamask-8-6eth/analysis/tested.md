@@ -111,3 +111,30 @@ is a substring of a longer written word (the author's own comment about
 is acknowledged but not confirmed as a real mechanism; see README), or that a
 word exists in material outside these
 2 texts and their direct metadata.
+
+## Metadata surfaces, read to exhaustion (2026-08-17)
+
+Every surface either text names is now read, and the word pool is closed unless
+the video's own frames yield something.
+
+| surface | BIP39 entries it carries | in the pool |
+|---|---|---|
+| blog post body, full text | 89 | yes |
+| blog post tags, 2020 archived capture | `season`, `market`, `fork`, `round` | yes |
+| video title and description | 37 | yes |
+| video tags, 10 of them | `top`; `season`, `hard`, `coin` as substrings | yes |
+| blog post tags, current live page | `home`, `guide`, `profit`, `main`, `ability` | no, see below |
+
+The live page's tags are excluded deliberately, not overlooked. They are
+"Crypto, Bitcoin mining, Crypto mining, ASIC miners, Bitmain Antminers, Avalon
+ASICs, Mining profitability, Mining guides, Mining ROI, home asic miner,
+asicminervalue, mini bitcoin miner, hiveos", none of which appears on the 2020
+archived capture. They arrived with a site redesign years after the wallet was
+funded on 2020-02-12, so they cannot hold words that were fixed on that date.
+Reading the live page also confirms independently what fact 5 in the README
+states: the original tags are gone from it, which is why `fork` sat unfound.
+
+What this leaves untested is the one surface the author names and no one has
+looked at: text written on screen in the video itself, and the thumbnail. No
+sweep can reach it, and if 2 of the 6 video words live there, every sweep
+priced in `analysis/leads.md` is void.
