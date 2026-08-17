@@ -203,6 +203,8 @@ Full notes: [analysis/leads.md](analysis/leads.md).
 | `tools/gpu_reference.py` | the GPU searcher's specification: index-to-candidate unranking and the address derivation, both self-tested |
 | `tools/gpu/keccak.cl` | Keccak-256 for the Ethereum address, specialised to the 64-byte public key |
 | `tools/gpu/verify_keccak.py` | compiles that kernel on any OpenCL device, a CPU runtime included, and checks it against the canonical vector |
+| `tools/gpu/unrank.cl` | index to candidate on device, plus the BIP39 checksum filter and the SHA-256 it needs |
+| `tools/gpu/verify_unrank.py` | checks that kernel against `gpu_reference.py`, candidate for candidate, no GPU required |
 | `tools/fig_slots.py` | generates images/01-seed-slot-grid.svg from data/seed-slots.json |
 
 ## Sources
