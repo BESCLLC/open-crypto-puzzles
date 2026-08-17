@@ -41,10 +41,13 @@ hide in the video and 6 in the blog post.
 The video description carries 2 sentences with no connection to its finance
 topic:
 
-> "Don't expect anything easy there will be dark fog on the lake."
+> "Don't expect anything easy there will be dark fog on the lake. Also It is
+> not impossible."
 
-The same sentence continues with a short assurance that the challenge can, in
-fact, be solved.
+The second sentence is quoted in full here because of what it carries: `also`
+is a BIP39 word standing on its own, and `possible` is written inside its own
+negation, which is the author's own example of how a list word can hide inside
+a longer one. See [analysis/leads.md](analysis/leads.md), lead 0.
 
 > "Do you think its more likely for parrot can sing a song then for a goat to
 > whistle?"
