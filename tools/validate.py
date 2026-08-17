@@ -93,6 +93,20 @@ WORD_CHECK_FULL_EXCEPTIONS = {
     os.path.join(REPO_ROOT, "docs", "style-guide.md"),
 }
 
+# A markdown blockquote: the line reproduces someone else's words, not mine.
+QUOTED_LINE_PATTERN = re.compile(r"^\s*>")
+
+
+def _in_backticks(line, word):
+    """True if every occurrence of word on this line sits inside a backtick span."""
+    pattern = re.compile(r"\b" + re.escape(word) + r"\b")
+    spans = [m.span() for m in re.finditer(r"`[^`]*`", line.lower())]
+    hits = list(pattern.finditer(line.lower()))
+    if not hits:
+        return False
+    return all(any(s <= h.start() and h.end() <= e for s, e in spans) for h in hits)
+
+
 FRENCH_CHARS_PATTERN = re.compile(r"[àâçéèêëîïôûùüÿœ]", re.IGNORECASE)
 FRENCH_WORDS = ["dossier", "piste", "porte", "témoin", "épuisé", "réfuté"]
 
@@ -341,6 +355,13 @@ def check_forbidden_words(scope_root):
 
         for i, line in enumerate(lines, start=1):
             lower = line.lower()
+            # The style bans below are editorial: they govern how I write, not what a
+            # puzzle author wrote. A blockquote or a backticked span is source material
+            # reproduced verbatim, and altering it to satisfy a style rule would falsify
+            # the evidence. This exemption is not cosmetic: the video sentence "Also It
+            # is not impossible" had to be paraphrased around to pass this check, and
+            # the word the rule suppressed is a candidate seed word.
+            quoted = QUOTED_LINE_PATTERN.match(line)
             for word in FORBIDDEN_WORDS:
                 pattern = re.compile(r"\b" + re.escape(word) + r"\b")
                 if pattern.search(lower):
@@ -349,6 +370,10 @@ def check_forbidden_words(scope_root):
                         "fable", "opus", "sonnet",
                     }
                     if tool_name_word and (is_ai_name_exception_file or is_root_readme):
+                        continue
+                    # Tool names stay banned even in quotes; only the editorial bans
+                    # are exempted, so a quoted source cannot smuggle one in.
+                    if not tool_name_word and (quoted or _in_backticks(line, word)):
                         continue
                     failures.append(f"{rel(path)}:{i}: forbidden word '{word}' in: {line.strip()[:80]}")
     return failures

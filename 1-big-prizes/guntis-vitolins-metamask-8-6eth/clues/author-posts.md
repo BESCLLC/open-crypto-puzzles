@@ -13,10 +13,13 @@ https://www.youtube.com/watch?v=w4mpiuBP_aY
 Two sentences planted in the video description, unrelated to the video's
 finance topic:
 
-> V1: "Don't expect anything easy there will be dark fog on the lake."
+> V1: "Don't expect anything easy there will be dark fog on the lake. Also It
+> is not impossible."
 
-The same sentence continues with a short assurance that the challenge can, in
-fact, be solved.
+Both sentences of V1 are reproduced verbatim above. The second one matters: it
+carries `also` as a standalone BIP39 word, and `possible` written inside its own
+negation, which is the author's own stated example of a list word hiding inside
+a longer word (see `analysis/leads.md`, lead 0).
 
 > V2: "Do you think its more likely for parrot can sing a song then for a goat
 > to whistle?"
@@ -38,6 +41,24 @@ The archived HTML of this post (Wayback Machine capture, 2020-05-28) carries,
 in its footer: "Posted in Blog. Tagged altcoin season, altcoins, bitcoin, bull
 market, crypto pumping, ethereum, ethereum fork, round." The current live page
 no longer carries these tags; the site redesign removed them.
+
+## The challenge rules, quoted from the video description
+
+The description states where the words are, and names the surfaces:
+
+> 2.12 wallet seed words- 6 are hidden in this video (description, tags, title,
+> video basically could be anywhere in this video) 6.words are hidden in
+> original post. This task will unlock wallet to claim 10 eth.
+
+The blog post states the same split in its own words:
+
+> There is 6 words hidden in this youtube video(could be in description,title,
+> or video itself) and 6 words in this Post.
+
+The video's own tags are named here and have never been read; they are not
+rendered on the page, they sit in the HTML `meta name="keywords"` element. The
+blog post's tags, which is where `fork` was eventually found, went unread for
+the same reason.
 
 ## The 5 hints, published later in other video descriptions
 

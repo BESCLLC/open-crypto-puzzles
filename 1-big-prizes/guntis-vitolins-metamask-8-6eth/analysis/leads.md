@@ -1,7 +1,68 @@
 # Open leads, full notes
 
 Ranked summary is in the README. This file has the reasoning behind the
-ranking. All 3 leads below are priced and specified; none has been run.
+ranking.
+
+## 0. The video's own tags, and the substring rule, both confirmed from source
+
+Re-reading the challenge video's title and description in full, against the
+blog post in full, settles three things that reorder everything below. All
+three come from the author's own published wording, not from inference.
+
+**The video has tags, and he names them as a hiding place.** The description
+sets out the rules: "12 wallet seed words- 6 are hidden in this video
+(description, tags, title, video basically could be anywhere in this video)
+6.words are hidden in original post." The word "tags" is his. The blog post's
+tags are where `fork` sat unread for 6 years; the video's tags have never been
+read at all. They are not visible on the page, they live in the HTML
+`meta name="keywords"` element, which is exactly why the blog ones were missed.
+This is the single highest-value unexamined surface in the puzzle and it costs
+one page-source view, no compute.
+
+**The substring rule is confirmed, and it points at a specific word.** The
+planted video sentence, quoted from the description in full:
+
+> Don't expect anything easy there will be dark fog on the lake. Also It is not
+> impossible.
+
+The author, asked whether a list word could hide inside a longer written word,
+said yes and offered "possible" inside its own negation, formed with the prefix
+"im-", as his own example. That was recorded here as an unconfirmed mechanism.
+It is not: he was describing this sentence. `possible` is a BIP39 word and it is
+written inside `impossible` in his own planted text. `also`, in the same
+sentence, is a BIP39 word standing on its own. Neither has appeared in any
+sweep in `analysis/tested.md`.
+
+Note what hid this. The second sentence never appears in `clues/author-posts.md`;
+it is paraphrased there as "a short assurance that the challenge can, in fact,
+be solved". The paraphrase exists because this repository's own style check
+forbids the word, and the check made no exception for quoted source text. A
+rule about how I write suppressed what the author wrote, and what it suppressed
+is a candidate seed word. `tools/validate.py` now exempts blockquotes and
+backticked spans for that reason.
+
+**The word budget is per source, not per planted sentence.** Both texts say the
+same thing: 6 words "in this video ... basically could be anywhere in this
+video", and 6 "in this Post". Every sweep so far drew the pool from the 5
+absurd sentences plus a few metadata words, on the assumption that the absurd
+sentences carry the whole payload. `fork` already disproved that assumption
+once. The post alone contains 89 BIP39-valid words; the video title and
+description contain 37.
+
+Two corrections to the pools used in the sweeps below: `top` was swept as a
+video-side metadata word, but it appears in the post ("top ten altcoins"), not
+in the video at all; and `finish` reaches the pool only by stemming the
+description's "finished".
+
+Ranked consequence. Read the video tags first, since they are free. Then the
+cheapest sweep that contains new information is the planted-sentence pools plus
+`also` and `possible`: 1,365 video subsets by 364 post subsets, 22,537,569,600
+derivations over both water branches, about 8 hours on one rented GPU. That is
+a smaller space than lead 1 below and it tests 2 words that lead 1 does not
+contain.
+
+What would confirm it: a match. What would kill it: exhaustion with 0 match,
+under the same witness protocol as every prior sweep.
 
 ## 1. Extend the swept word pool with connecting words (liaisons)
 
