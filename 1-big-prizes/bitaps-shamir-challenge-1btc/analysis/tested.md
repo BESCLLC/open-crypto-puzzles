@@ -66,3 +66,38 @@ would drop the polynomial's effective degree. This is not identifiable from only
 shares; I enumerated the 16-byte space of this specific degenerate case and found no way
 to test it without a 3rd share. Not pursued further as a standalone lead. Date:
 2026-08-03.
+
+## 7. Independent recomputation of the 127.73-bit figure, against the 2 published shares
+
+Section 3 measures the duplicate-value rejection by enumerating the per-byte coefficient
+space in the abstract. I have now redone that measurement the other way round, directly
+against the 2 shares the author actually published, with an implementation written from
+the deployed source rather than from my earlier notes, and the two agree exactly.
+
+The rule, read off `__split_secret` in the bundled `jsbtc`: the coefficient list starts as
+`q = [secret[b]]`, and each newly drawn byte is rejected while `q.includes(w)`. At
+threshold 3 that forbids three equalities, `c1 = s`, `c2 = s` and `c1 = c2`, where `s` is
+the secret byte. Because the 2 published shares sit at distinct nonzero indexes (3 and
+15), every candidate `s` implies exactly one `(c1, c2)` pair by solving the 2 equations in
+2 unknowns over GF(256). So the rule is directly testable per byte: solve for the pair,
+discard `s` when the pair violates it.
+
+Method: for each of the 16 byte positions, all 256 candidate values of `s`, each solved
+and then re-substituted into both share equations before the rejection rule was applied.
+Result: exactly 253 of 256 candidates survive at every one of the 16 positions, the 3
+eliminated values being one per forbidden equality. Residual entropy
+16 x log2(253) = 127.73 bits, narrowed by 0.27 bits from the uniform 128. This reproduces
+section 3's first measurement to 2 decimal places by an independent route.
+
+Witness: the same code re-derives both published shares from a synthetic secret and
+recovers that secret from 3 shares, so the field arithmetic and the index decoding are
+certified before the count is taken.
+
+This also settles the outside claim recorded in `data/related_disclosures.csv`, that the
+biased coefficient generation "enables practical statistical attacks using fewer shares
+than the declared threshold". It does not. The bias is real and it is worth a quarter of
+one bit across the entire secret. At the full 125-bit figure from section 3, a search is
+not merely expensive, it is unreachable by any margin that further optimisation could
+close. Nothing in the coefficient rejection rule is a way in.
+
+Date: 2026-08-17.

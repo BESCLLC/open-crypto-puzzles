@@ -1,4 +1,5 @@
 bip-utils
+mnemonic
 ecdsa
 base58
 pycryptodome
