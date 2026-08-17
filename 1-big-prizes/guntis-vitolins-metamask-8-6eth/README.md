@@ -205,6 +205,8 @@ Full notes: [analysis/leads.md](analysis/leads.md).
 | `tools/gpu/verify_keccak.py` | compiles that kernel on any OpenCL device, a CPU runtime included, and checks it against the canonical vector |
 | `tools/gpu/unrank.cl` | index to candidate on device, plus the BIP39 checksum filter and the SHA-256 it needs |
 | `tools/gpu/verify_unrank.py` | checks that kernel against `gpu_reference.py`, candidate for candidate, no GPU required |
+| `tools/gpu/sweep.cl` | the full pipeline: index, checksum, PBKDF2, BIP32, Keccak, compare |
+| `tools/gpu/run_sweep.py` | runs one tier, with the witness protocol and checkpointing wired in |
 | `tools/fig_slots.py` | generates images/01-seed-slot-grid.svg from data/seed-slots.json |
 
 ## Sources

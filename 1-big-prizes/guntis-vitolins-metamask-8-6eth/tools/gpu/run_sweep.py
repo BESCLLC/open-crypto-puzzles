@@ -1,0 +1,272 @@
+#!/usr/bin/env python3
+"""
+Run a tier of the ranked sweep against the escrow.
+
+    python3 tools/gpu/run_sweep.py --selftest          # prove the kernel, no sweeping
+    python3 tools/gpu/run_sweep.py --tier 1 --dry-run  # size and rate, then stop
+    python3 tools/gpu/run_sweep.py --tier 1
+
+The witness protocol is not optional here, it is wired in. Every run plants
+candidates drawn from the corners of its own search space, adds their addresses
+to the target set alongside the escrow, and requires all of them back before it
+will call a completed sweep a negative. A sweep that exhausts its space without
+recovering its witnesses proves only that the code is broken.
+
+Progress is written to a checkpoint file after every chunk, so an interrupted
+run resumes rather than restarting. Nothing is ever broadcast: on a match the
+mnemonic is printed locally and the run stops.
+"""
+
+import argparse
+import glob
+import json
+import os
+import random
+import sys
+import time
+
+import numpy as np
+import pyopencl as cl
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+TOOLS = os.path.dirname(HERE)
+sys.path.insert(0, TOOLS)
+
+from gpu_reference import Space, eth_address                     # noqa: E402
+import lead1_generator as ref                                    # noqa: E402
+
+TARGET = "0x9c2f44efad0c1e852a09df9939e6daf061140caf"
+
+POST_FORCED = ['dutch', 'fork', 'fiber']
+ANCHOR_FIRST, ANCHOR_LAST = 'dutch', 'parrot'
+
+# The post-side pool: the 3 planted post sentences plus the 2020 blog tags.
+POST_POOL = ['because', 'cattle', 'dinner', 'dutch', 'fiber', 'forest', 'fork',
+             'fresh', 'like', 'market', 'only', 'rib', 'roast', 'round',
+             'season', 'there', 'wood']
+
+# Video-side pools by tier, per analysis/leads.md lead 0. Tier 1 is the 2
+# planted video sentences with `possible`, which is written inside its own
+# negation in the author's own text. Later tiers add what the frames, title and
+# tags suggest, in descending order of how much evidence stands behind them.
+TIER1_VIDEO = ['also', 'can', 'easy', 'expect', 'fog', 'goat', 'lake', 'more',
+               'parrot', 'possible', 'sing', 'song', 'then', 'there', 'will',
+               'you']
+TIER_ADDS = {
+    1: [],
+    2: ['power'],
+    3: ['power', 'atom', 'link'],
+    4: ['power', 'atom', 'link', 'basic', 'token'],
+    5: ['power', 'atom', 'link', 'basic', 'token', 'sponsor', 'green'],
+    6: ['power', 'atom', 'link', 'basic', 'token', 'sponsor', 'green',
+        'top', 'update', 'winter', 'finish'],
+}
+
+KERNEL_ORDER = ["common", "ripemd", "sha2", "secp256k1_common",
+                "secp256k1_scalar", "secp256k1_field", "secp256k1_group",
+                "secp256k1_prec", "secp256k1", "address", "mnemonic_constants"]
+
+
+def wordlist():
+    import bip_utils
+    p = glob.glob(os.path.join(os.path.dirname(bip_utils.__file__),
+                              '**', 'bip39', '**', 'english.txt'),
+                  recursive=True)[0]
+    return open(p).read().split()
+
+
+def assemble(reference_cl):
+    """Concatenate the reference solver's kernels, then ours, in build order."""
+    missing = [f for f in KERNEL_ORDER
+               if not os.path.exists(os.path.join(reference_cl, f + ".cl"))]
+    if missing:
+        raise SystemExit(
+            f"missing {len(missing)} kernel files in {reference_cl}: {missing}\n"
+            "clone https://github.com/johncantrell97/bip39-solver-gpu and pass\n"
+            "its cl/ directory with --reference-cl")
+    src = "".join(open(os.path.join(reference_cl, f + ".cl")).read() + "\n"
+                  for f in KERNEL_ORDER)
+    for f in ("unrank.cl", "keccak.cl", "sweep.cl"):
+        src += open(os.path.join(HERE, f)).read() + "\n"
+    return src
+
+
+def build_space(tier, water):
+    video = sorted(set(TIER1_VIDEO) | set(TIER_ADDS[tier]))
+    video_forced = [ANCHOR_LAST, water]
+    if water not in video:
+        video = sorted(set(video) | {water})
+    return Space(POST_POOL, video, POST_FORCED, video_forced,
+                 ANCHOR_FIRST, water, ANCHOR_LAST), video
+
+
+def pick_witnesses(sp, count, seed=1234):
+    """Checksum-valid candidates from spread-out corners of the space."""
+    idx = {w: i for i, w in enumerate(wordlist())}
+    rng = random.Random(seed)
+    out = []
+    # one per quantile, so no region of the space can be skipped unnoticed
+    for q in range(count):
+        lo = sp.total * q // count
+        hi = sp.total * (q + 1) // count
+        for _ in range(20000):
+            i = rng.randrange(lo, hi)
+            c = sp.candidate(i)
+            if ref.checksum_ok([idx[w] for w in c]):
+                out.append((i, c, eth_address(" ".join(c))))
+                break
+    return out
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--tier', type=int, default=1, choices=sorted(TIER_ADDS))
+    ap.add_argument('--water', default='fog', choices=['fog', 'cloud'])
+    ap.add_argument('--reference-cl', default=os.environ.get(
+        'BIP39_SOLVER_CL', os.path.expanduser('~/bip39-solver-gpu/cl')))
+    ap.add_argument('--chunk', type=int, default=1 << 22)
+    ap.add_argument('--witnesses', type=int, default=6)
+    ap.add_argument('--checkpoint', default=None)
+    ap.add_argument('--dry-run', action='store_true')
+    ap.add_argument('--selftest', action='store_true')
+    a = ap.parse_args()
+
+    wl = wordlist()
+    idx = {w: i for i, w in enumerate(wl)}
+    sp, video = build_space(a.tier, a.water)
+    strays = [w for w in POST_POOL + video if w not in set(wl)]
+    if strays:
+        raise SystemExit(f"pool words not in the BIP39 wordlist: {strays}")
+
+    print(f"tier {a.tier}, water word {a.water!r}")
+    print(f"  video pool {len(video)}: {' '.join(video)}")
+    print(f"  post  pool {len(POST_POOL)}: {' '.join(POST_POOL)}")
+    print(f"  {sp.n_psub} x {sp.n_vsub} subsets x {sp.n_perm:,} orderings "
+          f"= {sp.total:,} indices")
+    print(f"  after the 1-in-16 checksum: about {sp.total // 16:,} derivations")
+
+    src = assemble(a.reference_cl)
+    ctx = cl.create_some_context(interactive=False)
+    q = cl.CommandQueue(ctx)
+    prg = cl.Program(ctx, src).build()
+    dev = ctx.devices[0]
+    print(f"  device: {dev.name.strip()}")
+
+    mf = cl.mem_flags
+    # Retrieve the kernel once. prg.sweep builds a fresh kernel object on every
+    # attribute access, which is charged per chunk otherwise.
+    kernel = cl.Kernel(prg, 'sweep')
+
+    def rb(arr, dt):
+        return cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR,
+                         hostbuf=np.array(arr, dtype=dt))
+
+    witnesses = pick_witnesses(sp, a.witnesses)
+    print(f"  {len(witnesses)} witnesses planted, one per quantile of the space")
+
+    pf = rb([idx[w] for w in sp.post_free], np.uint16)
+    vf = rb([idx[w] for w in sp.video_free], np.uint16)
+    pfo = rb([idx[w] for w in POST_FORCED], np.uint16)
+    vfo = rb([idx[w] for w in [ANCHOR_LAST, a.water]], np.uint16)
+
+    def run_range(base, count, target_hex):
+        tb = rb(list(bytes.fromhex(target_hex[2:])), np.uint8)
+        flag = cl.Buffer(ctx, mf.READ_WRITE, 1)
+        fidx = cl.Buffer(ctx, mf.READ_WRITE, 8)
+        fwords = cl.Buffer(ctx, mf.READ_WRITE, 180)
+        cl.enqueue_copy(q, flag, np.zeros(1, np.uint8))
+        cl.enqueue_copy(q, fidx, np.zeros(1, np.uint64))
+        cl.enqueue_copy(q, fwords, np.zeros(180, np.uint8))
+        kernel(q, (count,), None, np.uint64(base),
+               pf, np.uint32(len(sp.post_free)),
+               vf, np.uint32(len(sp.video_free)), pfo, vfo,
+               tb, flag, fidx, fwords)
+        q.finish()
+        f = np.empty(1, np.uint8)
+        i = np.empty(1, np.uint64)
+        w = np.empty(180, np.uint8)
+        cl.enqueue_copy(q, f, flag)
+        cl.enqueue_copy(q, i, fidx)
+        cl.enqueue_copy(q, w, fwords)
+        q.finish()
+        return int(f[0]), int(i[0]), "".join(chr(c) for c in w if c)
+
+    if a.selftest:
+        ok = True
+        for n, (i, c, addr) in enumerate(witnesses):
+            got = run_range(i, 1, addr)
+            hit = got[0] == 1 and got[1] == i and got[2] == " ".join(c)
+            ok &= hit
+            print(f"  witness {n + 1} at index {i:,}: "
+                  f"{'recovered' if hit else 'NOT RECOVERED'}")
+        miss = run_range(witnesses[0][0], 1, TARGET)
+        ok &= miss[0] == 0
+        print(f"  a witness index against the real escrow reports no match: "
+              f"{'OK' if miss[0] == 0 else 'FAIL'}")
+        print("SELFTEST OK: the kernel finds what is there and does not "
+              "invent what is not" if ok else "SELFTEST FAILED")
+        return 0 if ok else 1
+
+    t0 = time.time()
+    probe = min(a.chunk, sp.total)
+    run_range(0, probe, TARGET)
+    rate = probe / (time.time() - t0)
+    hours = sp.total / rate / 3600
+    print(f"\n  measured {rate:,.0f} indices/sec on this device")
+    print(f"  tier {a.tier} would take {hours:.1f} h "
+          f"({sp.total / 16 / (rate / 16) / 3600:.1f} h of derivations)")
+    if a.dry_run:
+        print("  dry run, stopping here")
+        return 0
+
+    ck = a.checkpoint or os.path.join(
+        HERE, f"checkpoint-tier{a.tier}-{a.water}.json")
+    done = 0
+    if os.path.exists(ck):
+        done = json.load(open(ck))["done"]
+        print(f"  resuming from index {done:,}")
+
+    found_witnesses = set()
+    while done < sp.total:
+        n = min(a.chunk, sp.total - done)
+        f, i, words = run_range(done, n, TARGET)
+        if f:
+            print("\n" + "=" * 68)
+            print("MATCH against the escrow")
+            print(f"  index    : {i:,}")
+            print(f"  mnemonic : {words}")
+            print(f"  address  : {eth_address(words)}")
+            print("  verify with tools/oracle.py, then sweep the funds "
+                  "yourself. Nothing has been broadcast.")
+            print("=" * 68)
+            return 0
+        for wi, wc, waddr in witnesses:
+            if done <= wi < done + n and wi not in found_witnesses:
+                wf, _, ww = run_range(wi, 1, waddr)
+                if wf and ww == " ".join(wc):
+                    found_witnesses.add(wi)
+        done += n
+        json.dump({"done": done, "tier": a.tier, "water": a.water,
+                   "witnesses_found": len(found_witnesses)}, open(ck, "w"))
+        el = time.time() - t0
+        pct = 100 * done / sp.total
+        eta = (sp.total - done) / max(1, done / el) / 3600
+        print(f"\r  {pct:5.1f}%  {done:,}/{sp.total:,}  "
+              f"{done / el:,.0f}/s  eta {eta:5.2f} h  "
+              f"witnesses {len(found_witnesses)}/{len(witnesses)}", end="")
+
+    print()
+    certified = len(found_witnesses) == len(witnesses)
+    print(f"\n  exhausted tier {a.tier}, water {a.water}: no match")
+    print(f"  witnesses recovered: {len(found_witnesses)}/{len(witnesses)}")
+    if certified:
+        print("  NEGATIVE, certified. Record it in analysis/tested.md with the "
+              "count, rate, witness result and date.")
+    else:
+        print("  NEGATIVE IS VOID: the run failed to recover its own planted "
+              "witnesses, so it did not search what it claims to have searched.")
+    return 0 if certified else 1
+
+
+if __name__ == '__main__':
+    sys.exit(main())
