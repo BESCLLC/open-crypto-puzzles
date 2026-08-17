@@ -100,17 +100,25 @@ def build_space(tier, water):
                  ANCHOR_FIRST, water, ANCHOR_LAST), video
 
 
-def pick_witnesses(sp, count, seed=1234):
-    """Checksum-valid candidates from spread-out corners of the space."""
+def pick_witnesses(sp, count, lo=0, hi=None, seed=1234):
+    """Checksum-valid candidates spread across [lo, hi), one per quantile.
+
+    Witnesses are planted inside the range the caller will actually sweep. When
+    the work is split across shards that matters: a shard holding no witness
+    would report "0/0 recovered" and certify its own negative without having
+    proved anything about itself.
+    """
+    hi = sp.total if hi is None else hi
     idx = {w: i for i, w in enumerate(wordlist())}
-    rng = random.Random(seed)
+    # Seed from the range so each shard plants different candidates, and so a
+    # rerun of the same shard plants the same ones.
+    rng = random.Random((seed, lo, hi).__hash__())
     out = []
-    # one per quantile, so no region of the space can be skipped unnoticed
     for q in range(count):
-        lo = sp.total * q // count
-        hi = sp.total * (q + 1) // count
-        for _ in range(20000):
-            i = rng.randrange(lo, hi)
+        a = lo + (hi - lo) * q // count
+        b = lo + (hi - lo) * (q + 1) // count
+        for _ in range(40000):
+            i = rng.randrange(a, max(a + 1, b))
             c = sp.candidate(i)
             if ref.checksum_ok([idx[w] for w in c]):
                 out.append((i, c, eth_address(" ".join(c))))
@@ -187,8 +195,11 @@ def main():
         return cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR,
                          hostbuf=np.array(arr, dtype=dt))
 
-    witnesses = pick_witnesses(sp, a.witnesses)
-    print(f"  {len(witnesses)} witnesses planted, one per quantile of the space")
+    _lo = sp.total * a.shard // a.shards
+    _hi = sp.total * (a.shard + 1) // a.shards
+    witnesses = pick_witnesses(sp, a.witnesses, _lo, _hi)
+    where = "the space" if a.shards == 1 else "this shard"
+    print(f"  {len(witnesses)} witnesses planted, one per quantile of {where}")
 
     pf = rb([idx[w] for w in sp.post_free], np.uint16)
     vf = rb([idx[w] for w in sp.video_free], np.uint16)
@@ -353,10 +364,11 @@ def main():
     start_done = done
     t_session = time.time()
 
-    # Only witnesses inside this shard can be recovered by this process.
     mine = [w for w in witnesses if lo <= w[0] < hi]
-    if a.shards > 1:
-        print(f"  {len(mine)} of {len(witnesses)} witnesses fall in this shard")
+    if len(mine) != len(witnesses):
+        raise SystemExit("witnesses were planted outside the swept range")
+    if not mine:
+        raise SystemExit("no witnesses planted; a negative would be uncertified")
 
     found_witnesses = set()
     while done < hi:
