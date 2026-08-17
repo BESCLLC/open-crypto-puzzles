@@ -1,5 +1,5 @@
 /*
- * The sweep kernel: one index in, one candidate tested against the escrow.
+ * The sweep kernels: one index in, one candidate tested against the escrow.
  *
  * Concatenate ahead of this file, in this order, the reference solver's
  * common, ripemd, sha2, secp256k1_common, secp256k1_scalar, secp256k1_field,
@@ -7,41 +7,38 @@
  * then this repository's unrank.cl and keccak.cl. tools/gpu/run_sweep.py does
  * that assembly; the order matters and is the order the reference project uses.
  *
- * Per work item:
- *   1. index to 12 wordlist indices        (unrank.cl, checked against the reference)
- *   2. BIP39 checksum, and stop if it fails (unrank.cl; discards 15 in 16)
- *   3. mnemonic string, then PBKDF2-HMAC-SHA512 x2048 to a 64-byte seed
- *   4. BIP32 to m/44'/60'/0'/0/0
- *   5. Keccak-256 of the uncompressed public key, low 20 bytes
- *   6. compare to the target, and report the index if it matches
+ * The work is split across two kernels, and the reason is worth stating because
+ * the obvious single-kernel version is 16 times slower.
  *
- * Step 3 is essentially all of the cost. Steps 1 and 2 exist to keep 15 of
- * every 16 candidates from reaching it.
+ * A GPU executes 32 lanes in lockstep. The BIP39 checksum passes 1 candidate in
+ * 16, so a warp of 32 lanes holds a surviving candidate 87% of the time
+ * (1 - (15/16)^32). In a single kernel that tests the checksum and then falls
+ * through to PBKDF2, those 87% of warps pay the full 2048-iteration cost while
+ * only about 2 of their 32 lanes are doing anything useful. Measured on an RTX
+ * 5090 that was 842,450 indices/sec, which is only 52,653 derivations/sec: the
+ * card was doing the work, and 94% of it was thrown away.
+ *
+ * So: filter_pass does the cheap part and compacts the survivors into a dense
+ * array, and derive_pass reads that array, where every lane has real work.
+ *
+ *   filter_pass : index -> 12 words -> checksum -> append index if it survives
+ *   derive_pass : survivor index -> mnemonic -> PBKDF2 -> BIP32 -> Keccak -> compare
+ *
+ * sweep() keeps the fused form for single-candidate checks, where divergence
+ * costs nothing and one kernel is simpler to reason about.
  */
 
 #define ETH_PURPOSE 44
 #define ETH_COIN_TYPE 60
 
-__kernel void sweep(
-    ulong base_index,
-    __global const ushort *post_free, uint n_post_free,
-    __global const ushort *video_free, uint n_video_free,
-    __global const ushort *post_forced,
-    __global const ushort *video_forced,
-    __global const uchar *target20,
-    __global uchar *found_flag,
-    __global ulong *found_index,
-    __global uchar *found_words) {
-
-  ulong idx = base_index + (ulong)get_global_id(0);
-
-  ushort w12[12];
-  candidate_for_index(idx, post_free, n_post_free, video_free, n_video_free,
-                      post_forced, video_forced, w12);
-
-  if (!checksum_ok(w12)) return;
-
-  /* the mnemonic as a space-separated string, no trailing space */
+/*
+ * Derive the MetaMask default address for 12 word indices and compare it to
+ * target20. Returns true on an exact match, and writes the mnemonic text and
+ * its length out through mnemonic_out and len_out either way.
+ */
+static bool derive_and_compare(const ushort *w12,
+                               __global const uchar *target20,
+                               uchar *mnemonic_out, uint *len_out) {
   uchar mnemonic[180];
   for (int i = 0; i < 180; i++) mnemonic[i] = 0;
   uint at = 0;
@@ -51,9 +48,12 @@ __kernel void sweep(
     for (uint j = 0; j < len; j++) mnemonic[at++] = words[wi][j];
     mnemonic[at++] = 32;
   }
-  at--;                      /* drop the trailing space */
+  at--;                          /* drop the trailing space */
   mnemonic[at] = 0;
   uint mnemonic_length = at;
+
+  for (uint i = 0; i < 180; i++) mnemonic_out[i] = mnemonic[i];
+  *len_out = mnemonic_length;
 
   /* PBKDF2-HMAC-SHA512, 2048 iterations, salt "mnemonic", one output block */
   uchar ipad_key[128];
@@ -106,12 +106,96 @@ __kernel void sweep(
   keccak256_64(body, digest);
 
   for (int i = 0; i < 20; i++) {
-    if (digest[12 + i] != target20[i]) return;
+    if (digest[12 + i] != target20[i]) return false;
   }
+  return true;
+}
 
-  /* a match: record the index and the words, and let the host confirm it */
+/*
+ * Pass 1. Cheap: unrank and checksum only. Survivors are appended to a dense
+ * array through an atomic counter, so pass 2 has no idle lanes. Nothing is
+ * written past capacity; the host checks the count and refuses to proceed on
+ * an overflow rather than silently searching a truncated list.
+ */
+__kernel void filter_pass(
+    ulong base_index,
+    __global const ushort *post_free, uint n_post_free,
+    __global const ushort *video_free, uint n_video_free,
+    __global const ushort *post_forced,
+    __global const ushort *video_forced,
+    __global uint *count,
+    __global ulong *survivors,
+    uint capacity) {
+
+  ulong idx = base_index + (ulong)get_global_id(0);
+  ushort w12[12];
+  candidate_for_index(idx, post_free, n_post_free, video_free, n_video_free,
+                      post_forced, video_forced, w12);
+  if (!checksum_ok(w12)) return;
+
+  uint slot = atomic_inc(count);
+  if (slot < capacity) survivors[slot] = idx;
+}
+
+/*
+ * Pass 2. Every lane derives; there is nothing to diverge on.
+ */
+__kernel void derive_pass(
+    __global const ulong *survivors, uint n_survivors,
+    __global const ushort *post_free, uint n_post_free,
+    __global const ushort *video_free, uint n_video_free,
+    __global const ushort *post_forced,
+    __global const ushort *video_forced,
+    __global const uchar *target20,
+    __global uchar *found_flag,
+    __global ulong *found_index,
+    __global uchar *found_words) {
+
+  uint g = get_global_id(0);
+  if (g >= n_survivors) return;
+  ulong idx = survivors[g];
+
+  ushort w12[12];
+  candidate_for_index(idx, post_free, n_post_free, video_free, n_video_free,
+                      post_forced, video_forced, w12);
+
+  uchar mnemonic[180];
+  uint len;
+  if (!derive_and_compare(w12, target20, mnemonic, &len)) return;
+
   found_flag[0] = 1;
   found_index[0] = idx;
-  for (uint i = 0; i < mnemonic_length; i++) found_words[i] = mnemonic[i];
-  found_words[mnemonic_length] = 0;
+  for (uint i = 0; i < len; i++) found_words[i] = mnemonic[i];
+  found_words[len] = 0;
+}
+
+/*
+ * The fused form, kept for single-candidate checks such as the witness
+ * protocol's, where one index is tested on its own and divergence is free.
+ */
+__kernel void sweep(
+    ulong base_index,
+    __global const ushort *post_free, uint n_post_free,
+    __global const ushort *video_free, uint n_video_free,
+    __global const ushort *post_forced,
+    __global const ushort *video_forced,
+    __global const uchar *target20,
+    __global uchar *found_flag,
+    __global ulong *found_index,
+    __global uchar *found_words) {
+
+  ulong idx = base_index + (ulong)get_global_id(0);
+  ushort w12[12];
+  candidate_for_index(idx, post_free, n_post_free, video_free, n_video_free,
+                      post_forced, video_forced, w12);
+  if (!checksum_ok(w12)) return;
+
+  uchar mnemonic[180];
+  uint len;
+  if (!derive_and_compare(w12, target20, mnemonic, &len)) return;
+
+  found_flag[0] = 1;
+  found_index[0] = idx;
+  for (uint i = 0; i < len; i++) found_words[i] = mnemonic[i];
+  found_words[len] = 0;
 }

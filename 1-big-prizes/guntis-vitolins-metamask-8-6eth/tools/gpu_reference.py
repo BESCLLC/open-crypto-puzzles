@@ -239,8 +239,10 @@ def selftest():
     seen = {tuple(sp.candidate(i)) for i in idxs}
     good = len(seen) == len(idxs)
     ok &= good
-    print(f"index to candidate is injective on 50,000 random draws from "
+    print(f"index to candidate collides on none of 50,000 random draws from "
           f"{sp.total:,}: {'OK' if good else 'FAIL'}")
+    print("  note: this is sparsity, not injectivity. A candidate whose words "
+          "repeat one\n  entry has 2 indices; see tools/gpu/unrank.cl.")
 
     bad = sum(1 for i in idxs[:5000]
               if sp.candidate(i)[0] != 'dutch'
@@ -253,7 +255,7 @@ def selftest():
 
     if ok:
         print("SELFTEST OK: the address derivation matches the canonical vector "
-              "and the index mapping is a bijection")
+              "and the index mapping covers the space")
     return ok
 
 

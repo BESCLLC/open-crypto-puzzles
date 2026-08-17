@@ -191,6 +191,57 @@ def main():
         q.finish()
         return int(f[0]), int(i[0]), "".join(chr(c) for c in w if c)
 
+    kfilter = cl.Kernel(prg, 'filter_pass')
+    kderive = cl.Kernel(prg, 'derive_pass')
+
+    def run_two_pass(base, count, target_hex, capacity):
+        """Filter a block of indices, then derive only the survivors.
+
+        Returns (hit, index, words, n_survivors). The two passes exist because
+        a fused kernel wastes 94% of the card to warp divergence; see sweep.cl.
+        """
+        tb = rb(list(bytes.fromhex(target_hex[2:])), np.uint8)
+        cnt = cl.Buffer(ctx, mf.READ_WRITE, 4)
+        surv = cl.Buffer(ctx, mf.READ_WRITE, capacity * 8)
+        cl.enqueue_copy(q, cnt, np.zeros(1, np.uint32))
+        kfilter(q, (count,), None, np.uint64(base),
+                pf, np.uint32(len(sp.post_free)),
+                vf, np.uint32(len(sp.video_free)), pfo, vfo,
+                cnt, surv, np.uint32(capacity))
+        q.finish()
+        n = np.empty(1, np.uint32)
+        cl.enqueue_copy(q, n, cnt)
+        q.finish()
+        n = int(n[0])
+        if n > capacity:
+            raise SystemExit(
+                f"survivor buffer overflowed: {n:,} survivors for a capacity of "
+                f"{capacity:,}. Lower --chunk or raise the capacity factor; "
+                f"continuing would search a truncated list and report a false "
+                f"negative.")
+        if n == 0:
+            return 0, 0, "", 0
+
+        flag = cl.Buffer(ctx, mf.READ_WRITE, 1)
+        fidx = cl.Buffer(ctx, mf.READ_WRITE, 8)
+        fwords = cl.Buffer(ctx, mf.READ_WRITE, 180)
+        cl.enqueue_copy(q, flag, np.zeros(1, np.uint8))
+        cl.enqueue_copy(q, fidx, np.zeros(1, np.uint64))
+        cl.enqueue_copy(q, fwords, np.zeros(180, np.uint8))
+        kderive(q, (n,), None, surv, np.uint32(n),
+                pf, np.uint32(len(sp.post_free)),
+                vf, np.uint32(len(sp.video_free)), pfo, vfo,
+                tb, flag, fidx, fwords)
+        q.finish()
+        f = np.empty(1, np.uint8)
+        i = np.empty(1, np.uint64)
+        w = np.empty(180, np.uint8)
+        cl.enqueue_copy(q, f, flag)
+        cl.enqueue_copy(q, i, fidx)
+        cl.enqueue_copy(q, w, fwords)
+        q.finish()
+        return int(f[0]), int(i[0]), "".join(chr(c) for c in w if c), n
+
     if a.selftest:
         ok = True
         for n, (i, c, addr) in enumerate(witnesses):
@@ -203,18 +254,50 @@ def main():
         ok &= miss[0] == 0
         print(f"  a witness index against the real escrow reports no match: "
               f"{'OK' if miss[0] == 0 else 'FAIL'}")
+
+        # The two-pass path is what the sweep actually runs, so prove it
+        # separately: the fused kernel passing says nothing about compaction.
+        wi, wc, waddr = witnesses[0]
+        block = 1 << 16
+        base = max(0, wi - block // 2)
+        cap = max(1024, block // 4)
+        hit, hidx, hwords, nsurv = run_two_pass(base, block, waddr, cap)
+        # Compare the words, not the index. `there` is in both pools, so a
+        # candidate can carry it twice, and two permutation ranks then spell the
+        # same 12 words. The index that reports a hit is therefore not
+        # necessarily the one the witness was planted at; the mnemonic is.
+        tp = hit == 1 and hwords == " ".join(wc)
+        ok &= tp
+        alias = " (at an aliased index, the words repeat one)" \
+            if tp and hidx != wi else ""
+        print(f"  two-pass over {block:,} indices around a witness: "
+              f"{'recovered' if tp else 'NOT RECOVERED'}{alias}")
+        expected = block / 16
+        sane = 0.5 * expected < nsurv < 2 * expected
+        ok &= sane
+        print(f"  compaction kept {nsurv:,} of {block:,} "
+              f"(1 in {block / max(1, nsurv):.1f}, expected 1 in 16): "
+              f"{'OK' if sane else 'FAIL'}")
         print("SELFTEST OK: the kernel finds what is there and does not "
               "invent what is not" if ok else "SELFTEST FAILED")
         return 0 if ok else 1
 
+    # Survivor capacity per chunk. The checksum passes 1 in 16, so a chunk of
+    # N yields about N/16; 4x that is generous headroom against the binomial
+    # tail, and an overflow raises rather than truncating.
+    capacity = max(1024, a.chunk // 4)
+
     t0 = time.time()
     probe = min(a.chunk, sp.total)
-    run_range(0, probe, TARGET)
-    rate = probe / (time.time() - t0)
+    _, _, _, n_surv = run_two_pass(0, probe, TARGET, capacity)
+    el = time.time() - t0
+    rate = probe / el
     hours = sp.total / rate / 3600
     print(f"\n  measured {rate:,.0f} indices/sec on this device")
-    print(f"  tier {a.tier} would take {hours:.1f} h "
-          f"({sp.total / 16 / (rate / 16) / 3600:.1f} h of derivations)")
+    print(f"  {n_surv:,} of {probe:,} survived the checksum "
+          f"(1 in {probe / max(1, n_surv):.1f})")
+    print(f"  derivation rate about {n_surv / el:,.0f}/sec")
+    print(f"  tier {a.tier}, water {a.water}: {hours:.1f} h")
     if a.dry_run:
         print("  dry run, stopping here")
         return 0
@@ -229,7 +312,7 @@ def main():
     found_witnesses = set()
     while done < sp.total:
         n = min(a.chunk, sp.total - done)
-        f, i, words = run_range(done, n, TARGET)
+        f, i, words, _ = run_two_pass(done, n, TARGET, capacity)
         if f:
             print("\n" + "=" * 68)
             print("MATCH against the escrow")

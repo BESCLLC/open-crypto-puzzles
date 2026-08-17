@@ -2,9 +2,15 @@
  * Index to candidate, on device.
  *
  * Each work item gets one integer and must produce one 12-word candidate with
- * no shared state. The mapping has to be the same bijection tools/gpu_reference.py
+ * no shared state, and it must be the same mapping tools/gpu_reference.py
  * implements, candidate for candidate, or a sweep silently searches something
  * other than what was priced and its negative is worthless.
+ *
+ * The map is one-to-one onto (subset, permutation) pairs, not onto candidates.
+ * `there` belongs to both pools, so a candidate can carry it twice, and 2
+ * permutation ranks then spell the same 12 words. About 6% of the space is
+ * reached by 2 indices that way. Coverage is unaffected, which is what a sweep
+ * needs; the cost is that those candidates are derived twice.
  *
  *     idx = ((psub * n_vsub) + vsub) * 362880 + perm
  *
