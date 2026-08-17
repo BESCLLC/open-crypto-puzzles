@@ -202,6 +202,7 @@ Full notes: [analysis/leads.md](analysis/leads.md).
 | `tools/lead1_generator.py` | the lead-1 enumeration made executable: word pools, anchors, checksum filter, `--selftest` |
 | `tools/gpu_reference.py` | the GPU searcher's specification: index-to-candidate unranking and the address derivation, both self-tested |
 | `tools/gpu/keccak.cl` | Keccak-256 for the Ethereum address, specialised to the 64-byte public key |
+| `tools/gpu/verify_keccak.py` | compiles that kernel on any OpenCL device, a CPU runtime included, and checks it against the canonical vector |
 | `tools/fig_slots.py` | generates images/01-seed-slot-grid.svg from data/seed-slots.json |
 
 ## Sources
