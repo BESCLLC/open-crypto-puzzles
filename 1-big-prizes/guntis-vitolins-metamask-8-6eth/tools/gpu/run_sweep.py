@@ -129,6 +129,15 @@ def main():
     ap.add_argument('--checkpoint', default=None)
     ap.add_argument('--dry-run', action='store_true')
     ap.add_argument('--selftest', action='store_true')
+    ap.add_argument('--device', type=int, default=0,
+                    help='which OpenCL device to use, indexed across all '
+                         'platforms. One process per GPU; see --list-devices.')
+    ap.add_argument('--shards', type=int, default=1,
+                    help='split the index space into this many contiguous '
+                         'ranges, so several processes can share the work')
+    ap.add_argument('--shard', type=int, default=0,
+                    help='which of --shards ranges this process takes')
+    ap.add_argument('--list-devices', action='store_true')
     a = ap.parse_args()
 
     wl = wordlist()
@@ -145,12 +154,29 @@ def main():
           f"= {sp.total:,} indices")
     print(f"  after the 1-in-16 checksum: about {sp.total // 16:,} derivations")
 
+    devices = [d for p in cl.get_platforms() for d in p.get_devices()]
+    if a.list_devices:
+        for n, d in enumerate(devices):
+            print(f"  [{n}] {d.name.strip()}  "
+                  f"{cl.device_type.to_string(d.type)}  "
+                  f"{d.global_mem_size // (1 << 30)} GiB")
+        return 0
+    if not devices:
+        raise SystemExit("no OpenCL devices found")
+    if not 0 <= a.device < len(devices):
+        raise SystemExit(f"--device {a.device} out of range; this host has "
+                         f"{len(devices)} (see --list-devices)")
+    if not 0 <= a.shard < a.shards:
+        raise SystemExit(f"--shard must be in [0, {a.shards})")
+
     src = assemble(a.reference_cl)
-    ctx = cl.create_some_context(interactive=False)
+    dev = devices[a.device]
+    ctx = cl.Context([dev])
     q = cl.CommandQueue(ctx)
     prg = cl.Program(ctx, src).build()
-    dev = ctx.devices[0]
-    print(f"  device: {dev.name.strip()}")
+    print(f"  device [{a.device}] of {len(devices)}: {dev.name.strip()}")
+    if a.shards > 1:
+        print(f"  shard {a.shard} of {a.shards}")
 
     mf = cl.mem_flags
     # Retrieve the kernel once. prg.sweep builds a fresh kernel object on every
@@ -287,9 +313,10 @@ def main():
     # tail, and an overflow raises rather than truncating.
     capacity = max(1024, a.chunk // 4)
 
+    lo_probe = sp.total * a.shard // a.shards
     t0 = time.time()
     probe = min(a.chunk, sp.total)
-    _, _, _, n_surv = run_two_pass(0, probe, TARGET, capacity)
+    _, _, _, n_surv = run_two_pass(lo_probe, probe, TARGET, capacity)
     el = time.time() - t0
     rate = probe / el
     hours = sp.total / rate / 3600
@@ -297,26 +324,43 @@ def main():
     print(f"  {n_surv:,} of {probe:,} survived the checksum "
           f"(1 in {probe / max(1, n_surv):.1f})")
     print(f"  derivation rate about {n_surv / el:,.0f}/sec")
-    print(f"  tier {a.tier}, water {a.water}: {hours:.1f} h")
+    print(f"  whole space at this rate: {hours:.1f} h; "
+          f"this shard: {hours / a.shards:.1f} h")
     if a.dry_run:
         print("  dry run, stopping here")
         return 0
 
+    lo = sp.total * a.shard // a.shards
+    hi = sp.total * (a.shard + 1) // a.shards
+    span = hi - lo
+    if a.shards > 1:
+        print(f"  this shard covers [{lo:,}, {hi:,}) = {span:,} indices")
+
+    suffix = "" if a.shards == 1 else f"-s{a.shard}of{a.shards}"
     ck = a.checkpoint or os.path.join(
-        HERE, f"checkpoint-tier{a.tier}-{a.water}.json")
-    done = 0
+        HERE, f"checkpoint-tier{a.tier}-{a.water}{suffix}.json")
+    done = lo
     if os.path.exists(ck):
-        done = json.load(open(ck))["done"]
-        print(f"  resuming from index {done:,}")
+        saved = json.load(open(ck))
+        if saved.get("lo") == lo and saved.get("hi") == hi:
+            done = saved["done"]
+            print(f"  resuming from index {done:,}")
+        else:
+            print(f"  checkpoint is for a different range, ignoring it")
     # Rate and ETA must measure THIS session's work. Dividing the absolute index
     # by session elapsed makes a resumed run look impossibly fast and then decay,
     # which is what the first version reported.
     start_done = done
     t_session = time.time()
 
+    # Only witnesses inside this shard can be recovered by this process.
+    mine = [w for w in witnesses if lo <= w[0] < hi]
+    if a.shards > 1:
+        print(f"  {len(mine)} of {len(witnesses)} witnesses fall in this shard")
+
     found_witnesses = set()
-    while done < sp.total:
-        n = min(a.chunk, sp.total - done)
+    while done < hi:
+        n = min(a.chunk, hi - done)
         f, i, words, _ = run_two_pass(done, n, TARGET, capacity)
         if f:
             print("\n" + "=" * 68)
@@ -328,29 +372,33 @@ def main():
                   "yourself. Nothing has been broadcast.")
             print("=" * 68)
             return 0
-        for wi, wc, waddr in witnesses:
+        for wi, wc, waddr in mine:
             if done <= wi < done + n and wi not in found_witnesses:
                 wf, _, ww = run_range(wi, 1, waddr)
                 if wf and ww == " ".join(wc):
                     found_witnesses.add(wi)
         done += n
-        json.dump({"done": done, "tier": a.tier, "water": a.water,
+        json.dump({"done": done, "lo": lo, "hi": hi, "tier": a.tier,
+                   "water": a.water, "shard": a.shard, "shards": a.shards,
                    "witnesses_found": len(found_witnesses)}, open(ck, "w"))
         el = max(1e-6, time.time() - t_session)
         rate = (done - start_done) / el
-        pct = 100 * done / sp.total
-        eta = (sp.total - done) / max(1.0, rate) / 3600
-        nxt = min((w[0] for w in witnesses if w[0] >= done), default=None)
-        nxt_s = f" next witness {100 * nxt / sp.total:4.1f}%" if nxt else ""
-        print(f"\r  {pct:5.1f}%  {done:,}/{sp.total:,}  "
+        pct = 100 * (done - lo) / span
+        eta = (hi - done) / max(1.0, rate) / 3600
+        nxt = min((w[0] for w in mine if w[0] >= done), default=None)
+        nxt_s = (f" next witness {100 * (nxt - lo) / span:4.1f}%"
+                 if nxt else "")
+        print(f"\r  {pct:5.1f}%  {done - lo:,}/{span:,}  "
               f"{rate:,.0f}/s  eta {eta:5.2f} h  "
-              f"witnesses {len(found_witnesses)}/{len(witnesses)}{nxt_s}",
+              f"witnesses {len(found_witnesses)}/{len(mine)}{nxt_s}",
               end="", flush=True)
 
     print()
-    certified = len(found_witnesses) == len(witnesses)
-    print(f"\n  exhausted tier {a.tier}, water {a.water}: no match")
-    print(f"  witnesses recovered: {len(found_witnesses)}/{len(witnesses)}")
+    certified = len(found_witnesses) == len(mine)
+    scope = (f"tier {a.tier}, water {a.water}" if a.shards == 1
+             else f"tier {a.tier}, water {a.water}, shard {a.shard}/{a.shards}")
+    print(f"\n  exhausted {scope}: no match")
+    print(f"  witnesses recovered: {len(found_witnesses)}/{len(mine)}")
     if certified:
         print("  NEGATIVE, certified. Record it in analysis/tested.md with the "
               "count, rate, witness result and date.")
