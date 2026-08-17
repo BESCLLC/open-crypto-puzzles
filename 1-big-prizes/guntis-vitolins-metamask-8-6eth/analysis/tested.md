@@ -138,3 +138,36 @@ What this leaves untested is the one surface the author names and no one has
 looked at: text written on screen in the video itself, and the thumbnail. No
 sweep can reach it, and if 2 of the 6 video words live there, every sweep
 priced in `analysis/leads.md` is void.
+
+## The video's on-screen text, first pass (2026-08-17)
+
+The author's rules name text written on screen in the video as a hiding place,
+and until now nobody had watched the video for it. A first pass reports these
+on-screen items. None is conclusive, and the pass is not complete: the wording
+of the green challenge card has not been transcribed in full.
+
+| on screen | BIP39 entry | reading |
+|---|---|---|
+| "Sponsor", in the green challenge card | `sponsor` | also in the post text and spoken aloud, so already reachable |
+| "Powerful" | `power`, as a substring | live only if the overlay is the author's, not an application's |
+| "Analyze data" | none | neither word is in the wordlist |
+| "Experiment" | none | matches the slug of his own linked article, so navigation, not a plant |
+| the 10 altcoin tickers in the portfolio table | `atom`, `link`, `basic`, `token` | see below |
+
+The challenge card is green throughout rather than word by word, so the colour
+is styling and carries no information about which words are planted.
+
+The 10 altcoins are Ethereum, Monero, Cardano, Cosmos, Chainlink, NEO, IOTA,
+Basic Attention Token, Synthetix and Tezos. Their names and tickers yield 4
+BIP39 entries across 3 coins: `atom` from Cosmos, `link` from Chainlink,
+`basic` and `token` from Basic Attention Token. It is worth stating why this is
+weak rather than strong. The 3 coins that hit are exactly the 3 with ordinary
+English names, and BIP39 is a list of 2048 ordinary English words, so the
+overlap is what chance predicts. A hit rate near 7 of 10 would have suggested
+the author chose his portfolio to spell the seed. 3 of 10 suggests he chose it
+to make money.
+
+These words are cheap enough to carry anyway: adding `power`, `atom`, `link`,
+`basic` and `token` to the video pool takes the tier-1 sweep from 1,365 to
+4,845 subsets, 7.9 to 28.1 GPU-hours. The ranking in `analysis/leads.md`
+therefore runs them as later tiers rather than folding them into the first.
