@@ -9,15 +9,22 @@ Re-reading the challenge video's title and description in full, against the
 blog post in full, settles three things that reorder everything below. All
 three come from the author's own published wording, not from inference.
 
-**The video has tags, and he names them as a hiding place.** The description
-sets out the rules: "12 wallet seed words- 6 are hidden in this video
-(description, tags, title, video basically could be anywhere in this video)
-6.words are hidden in original post." The word "tags" is his. The blog post's
-tags are where `fork` sat unread for 6 years; the video's tags have never been
-read at all. They are not visible on the page, they live in the HTML
-`meta name="keywords"` element, which is exactly why the blog ones were missed.
-This is the single highest-value unexamined surface in the puzzle and it costs
-one page-source view, no compute.
+**The video has tags, he names them as a hiding place, and they are now read.**
+The description sets out the rules: "12 wallet seed words- 6 are hidden in this
+video (description, tags, title, video basically could be anywhere in this
+video) 6.words are hidden in original post." The word "tags" is his. The blog
+post's tags are where `fork` sat unread for 6 years, and the video's tags had
+never been read at all, because they are not rendered on the page: they live in
+the HTML `meta name="keywords"` element.
+
+The 10 tags are listed in `clues/author-posts.md`. What they yield: `top`
+standing alone in "top altcoins", and, under the substring rule confirmed
+below, `season` inside "altseason", `hard` inside "mining hardware", and `coin`
+inside "bitcoin", "altcoins" and "bitcoin generator". `there` also falls out of
+"ethereum". The last two are weak: `coin` and `there` are byproducts of words
+that appear throughout both texts, so their presence carries no intent. `season`
+is stronger, since the blog post independently carries "altcoin season" as a
+tag of its own, and `top` is not a substring at all.
 
 **The substring rule is confirmed, and it points at a specific word.** The
 planted video sentence, quoted from the description in full:
@@ -49,17 +56,26 @@ sentences carry the whole payload. `fork` already disproved that assumption
 once. The post alone contains 89 BIP39-valid words; the video title and
 description contain 37.
 
-Two corrections to the pools used in the sweeps below: `top` was swept as a
-video-side metadata word, but it appears in the post ("top ten altcoins"), not
-in the video at all; and `finish` reaches the pool only by stemming the
-description's "finished".
+One correction to the pools used in the sweeps below: `finish` reaches the pool
+only by stemming the description's "finished". A second correction I made
+before reading the tags was wrong and is withdrawn here. I recorded that `top`
+had been swept as a video-side word but appeared only in the post ("top ten
+altcoins"). The tags settle it: "top altcoins" is a tag on the video itself, so
+`top` is video-side after all, and it is also in the post, which the author has
+confirmed is allowed. The sweeps were right to carry it.
 
-Ranked consequence. Read the video tags first, since they are free. Then the
-cheapest sweep that contains new information is the planted-sentence pools plus
-`also` and `possible`: 1,365 video subsets by 364 post subsets, 22,537,569,600
-derivations over both water branches, about 8 hours on one rented GPU. That is
-a smaller space than lead 1 below and it tests 2 words that lead 1 does not
-contain.
+Ranked consequence, cheapest first, all under the same witness protocol:
+
+| sweep | video pool | subsets | derivations | one GPU |
+|---|---|---|---|---|
+| A: planted sentences plus `also` and `possible` | 17 | 496,860 | 22,537,569,600 | 7.9 h |
+| B: A plus title, hook and tag words | 22 | 1,763,580 | 79,995,988,800 | 28.1 h |
+| C: B plus the weak substring hits | 24 | 2,662,660 | 120,778,257,600 | 42.4 h |
+
+A is smaller than lead 1 below and tests 2 words lead 1 does not contain, which
+makes it the first sweep to run. B costs about 3.5 times as much and subsumes
+the metadata pool the failed R1 sweep used, this time with `also` and
+`possible` present.
 
 What would confirm it: a match. What would kill it: exhaustion with 0 match,
 under the same witness protocol as every prior sweep.

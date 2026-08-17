@@ -55,10 +55,19 @@ The blog post states the same split in its own words:
 > There is 6 words hidden in this youtube video(could be in description,title,
 > or video itself) and 6 words in this Post.
 
-The video's own tags are named here and have never been read; they are not
-rendered on the page, they sit in the HTML `meta name="keywords"` element. The
-blog post's tags, which is where `fork` was eventually found, went unread for
-the same reason.
+The video's own tags are named here. They are not rendered on the page, they sit
+in the HTML `meta name="keywords"` element, which is why they went unread for
+years, exactly as the blog post's tags did before `fork` was found in them. The
+10 tags on the challenge video:
+
+> mining rig, mining hardware, guntis vitolins, bitcoin, ethereum, top altcoins,
+> altseason, portfolio, altcoins for 2020, bitcoin generator
+
+BIP39 entries they carry: `top`, standing alone in "top altcoins"; and under the
+substring rule, `season` inside "altseason", `hard` inside "mining hardware",
+`coin` inside "bitcoin" and "altcoins", `there` inside "ethereum". The blog
+post's own tag list carries "altcoin season", giving `season` a second,
+standalone appearance.
 
 ## The 5 hints, published later in other video descriptions
 
