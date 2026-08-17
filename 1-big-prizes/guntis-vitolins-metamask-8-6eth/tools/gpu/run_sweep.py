@@ -308,6 +308,11 @@ def main():
     if os.path.exists(ck):
         done = json.load(open(ck))["done"]
         print(f"  resuming from index {done:,}")
+    # Rate and ETA must measure THIS session's work. Dividing the absolute index
+    # by session elapsed makes a resumed run look impossibly fast and then decay,
+    # which is what the first version reported.
+    start_done = done
+    t_session = time.time()
 
     found_witnesses = set()
     while done < sp.total:
@@ -331,12 +336,16 @@ def main():
         done += n
         json.dump({"done": done, "tier": a.tier, "water": a.water,
                    "witnesses_found": len(found_witnesses)}, open(ck, "w"))
-        el = time.time() - t0
+        el = max(1e-6, time.time() - t_session)
+        rate = (done - start_done) / el
         pct = 100 * done / sp.total
-        eta = (sp.total - done) / max(1, done / el) / 3600
+        eta = (sp.total - done) / max(1.0, rate) / 3600
+        nxt = min((w[0] for w in witnesses if w[0] >= done), default=None)
+        nxt_s = f" next witness {100 * nxt / sp.total:4.1f}%" if nxt else ""
         print(f"\r  {pct:5.1f}%  {done:,}/{sp.total:,}  "
-              f"{done / el:,.0f}/s  eta {eta:5.2f} h  "
-              f"witnesses {len(found_witnesses)}/{len(witnesses)}", end="")
+              f"{rate:,.0f}/s  eta {eta:5.2f} h  "
+              f"witnesses {len(found_witnesses)}/{len(witnesses)}{nxt_s}",
+              end="", flush=True)
 
     print()
     certified = len(found_witnesses) == len(witnesses)
