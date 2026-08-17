@@ -3,11 +3,16 @@
 Combinatorial unranking for the GPU front end.
 
 The GPU gets one integer per work item and must turn it into one 12-word
-candidate, with no shared state and no enumeration order dependency. That is
-a bijection from [0, N) onto the candidate set. If it is not a bijection the
-sweep silently skips or repeats part of the space, and a negative built on it
-is worthless -- which is the whole reason this is validated against the
-reference generator before any OpenCL is written.
+candidate, with no shared state and no enumeration order dependency. Every
+candidate must be reachable from some index; a mapping that skips part of the
+space makes any negative built on it worthless, which is the whole reason this
+is validated against the reference generator before any OpenCL is written.
+
+It is one-to-one onto (subset, permutation) pairs rather than onto candidates.
+`there` is in both pools, so a candidate can carry it twice, and 2 permutation
+ranks then spell the same 12 words. Roughly 6% of candidates are reached by 2
+indices. Coverage, which is what matters, is unaffected; those candidates are
+simply derived twice.
 
 Layout of the index:
 
