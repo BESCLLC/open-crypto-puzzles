@@ -173,6 +173,17 @@ def eth_address(mnemonic):
 CANONICAL_MNEMONIC = "abandon " * 11 + "about"
 CANONICAL_ADDRESS = "0x9858effd232b4033e47d90003d41ec34ecaeda94"
 
+# Tier 1 of the ranked sweep in analysis/leads.md: the BIP39 entries present in
+# the 5 planted sentences, plus `possible`, which is written inside its own
+# negation in the video's own planted sentence. Extracted from the sentences
+# mechanically rather than typed, and asserted against the wordlist below.
+TIER1_VIDEO_POOL = ['also', 'can', 'easy', 'expect', 'fog', 'goat', 'lake',
+                    'more', 'parrot', 'possible', 'sing', 'song', 'then',
+                    'there', 'will', 'you']
+TIER1_POST_POOL = ['because', 'cattle', 'dinner', 'dutch', 'fiber', 'forest',
+                   'fork', 'fresh', 'like', 'market', 'only', 'rib', 'roast',
+                   'round', 'season', 'there', 'wood']
+
 
 def selftest():
     import itertools
@@ -202,12 +213,24 @@ def selftest():
     print(f"permutation unranking reproduces all {factorial(9):,} orderings of 9 "
           f"in order: {'OK' if good else 'FAIL'}")
 
-    post = ['because', 'cattle', 'dinner', 'dutch', 'fiber', 'forest', 'fork',
-            'fresh', 'like', 'market', 'only', 'rib', 'roast', 'round',
-            'season', 'there', 'wood']
-    video = ['expect', 'easy', 'there', 'will', 'fog', 'lake', 'also',
-             'possible', 'you', 'think', 'more', 'parrot', 'can', 'sing',
-             'song', 'then', 'goat']
+    post = TIER1_POST_POOL
+    video = TIER1_VIDEO_POOL
+
+    # Guard first: a pool word that is not in the wordlist cannot appear in any
+    # valid mnemonic, so every candidate containing it is wasted work and the
+    # priced space is wrong. This check exists because "think" was typed into
+    # this pool by hand and is not a BIP39 entry.
+    import glob
+    import os
+    import bip_utils
+    wl = open(glob.glob(os.path.join(os.path.dirname(bip_utils.__file__),
+                                     '**', 'bip39', '**', 'english.txt'),
+                        recursive=True)[0]).read().split()
+    strays = [w for w in post + video if w not in set(wl)]
+    ok &= not strays
+    print(f"every pool word is a BIP39 entry: "
+          f"{'OK' if not strays else 'FAIL, not in the wordlist: ' + str(strays)}")
+
     sp = Space(post, video, ['dutch', 'fork', 'fiber'], ['parrot', 'fog'],
                'dutch', 'fog', 'parrot')
     import random

@@ -64,18 +64,28 @@ altcoins"). The tags settle it: "top altcoins" is a tag on the video itself, so
 `top` is video-side after all, and it is also in the post, which the author has
 confirmed is allowed. The sweeps were right to carry it.
 
-Ranked consequence, cheapest first, all under the same witness protocol:
+Ranked consequence, cheapest first, all under the same witness protocol. The
+video pool is the 16 BIP39 entries in the 2 planted video sentences, `possible`
+among them; the post pool is the 17 from the 3 planted post sentences plus the
+2020 tags. Later tiers add the words the video's frames and tags suggest, each
+of which is cheap to carry and none of which has evidence behind it comparable
+to `also` and `possible`.
 
-| sweep | video pool | subsets | derivations | one GPU |
-|---|---|---|---|---|
-| A: planted sentences plus `also` and `possible` | 17 | 496,860 | 22,537,569,600 | 7.9 h |
-| B: A plus title, hook and tag words | 22 | 1,763,580 | 79,995,988,800 | 28.1 h |
-| C: B plus the weak substring hits | 24 | 2,662,660 | 120,778,257,600 | 42.4 h |
+| tier | video pool adds | words | subsets | derivations | 1 GPU | 8 GPUs | cost |
+|---|---|---|---|---|---|---|---|
+| 1 | the planted sentences, with `possible` | 16 | 364,364 | 16,527,551,040 | 5.8 h | 0.7 h | $2.03 |
+| 2 | `power`, from "Powerful" on screen | 17 | 496,860 | 22,537,569,600 | 7.9 h | 1.0 h | $2.77 |
+| 3 | `atom`, `link`, from the portfolio tickers | 19 | 866,320 | 39,296,275,200 | 13.8 h | 1.7 h | $4.82 |
+| 4 | `basic`, `token`, from Basic Attention Token | 21 | 1,410,864 | 63,996,791,040 | 22.4 h | 2.8 h | $7.86 |
+| 5 | `sponsor`, `green`, from the challenge card | 23 | 2,178,540 | 98,818,574,400 | 34.7 h | 4.3 h | $12.13 |
+| 6 | `top`, `update`, `winter`, `finish`, from title, hook and tags | 27 | 4,604,600 | 208,864,656,000 | 73.3 h | 9.2 h | $25.64 |
 
-A is smaller than lead 1 below and tests 2 words lead 1 does not contain, which
-makes it the first sweep to run. B costs about 3.5 times as much and subsumes
-the metadata pool the failed R1 sweep used, this time with `also` and
-`possible` present.
+Run them in order and stop on a match. Tier 1 is under an hour on 8 cards and
+holds the only 2 words with the author's own evidence behind them. Every tier
+after it grows the space without improving the odds proportionally, which is
+the reason to run them in sequence rather than folding everything into one
+sweep: a negative over a tight pool rules out more per hour than a negative
+over a padded one.
 
 What would confirm it: a match. What would kill it: exhaustion with 0 match,
 under the same witness protocol as every prior sweep.
