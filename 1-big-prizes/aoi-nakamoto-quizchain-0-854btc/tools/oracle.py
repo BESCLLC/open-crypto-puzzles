@@ -62,6 +62,28 @@ TARGETS = {
 VECTOR_ENTROPY = "2941774a2abec9f30c7d6777d1d53d91"
 VECTOR_WIF_INDEX1 = "L5Z66qPmUkTAsWQywjRNHDxHrX6J1X1SQedp6V8QsbaXR7rGd6ex"
 
+# Solutions the author published herself, each with the MD5 prefix she had
+# announced for it beforehand. Every one is a plain string she gave in full, so
+# they certify the front of the pipeline -- exact bytes in, MD5 out -- without
+# needing any third-party text. Two are answers to solved blocks; the third is
+# the Grycoin Block 2 question text before any letter is changed, whose first
+# seven digits she published in a comment when a player asked for a way to check
+# his transcription. That third one is the strongest of the three: 28 bits over
+# 1,549 bytes, which pins an entire multi-paragraph text including its separator.
+PUBLISHED_SOLUTIONS = [
+    ("Thomas TOMI Harold Thomas Finney II", "f47",
+     "Quizchain2 Block 67, solved; [solution] TOMI [TOMI]"),
+    ("Still 21st Century", "4c4",
+     "Grycoin chain Block 1, solved"),
+]
+
+# Grycoin Block 2's question text, unmodified, joins its 10 paragraphs with a
+# blank line -- LF LF, despite her describing the separator as "13 10 13 10".
+# What she typed and what her copy produced are not the same thing, and it is
+# the copy that got hashed.
+BLOCK2_QUESTION_MD5_PREFIX = "7759227"
+BLOCK2_QUESTION_SEPARATOR = "\n\n"
+
 # Initials rule confirmed on the solved sibling lot Block 77 Stage One: of a
 # text's paragraphs, the ones whose first letter is NOT one of these get the
 # case-flip rule applied (see _flip_case). ITASM are the initials that appear
@@ -170,7 +192,7 @@ def selftest() -> bool:
     print(f"that WIF appears at no other index (no collision): {'OK' if part1b else 'FAIL'}")
     ok = ok and part1b
 
-    # Part 2: the flip_case rule, tested on a synthetic (non-puzzle) example,
+    # Part 2b: the flip_case rule, tested on a synthetic (non-puzzle) example,
     # since this script ships no copyrighted source text.
     example = "When the wind blows across the plain"
     flipped = flip_case(example)
@@ -179,7 +201,17 @@ def selftest() -> bool:
     print(f"flip_case on a synthetic example matches the expected first/last-letter swap: {'OK' if part2 else 'FAIL'}")
     ok = ok and part2
 
-    # Part 3: the Block 76 prefix filter, tested against the pair the author's
+    # Part 3: the published solutions, exact string to MD5 prefix. These are
+    # the author's own answers to her own solved blocks, so a failure here means
+    # the front of the pipeline is wrong, before any key derivation.
+    for text, prefix, where in PUBLISHED_SOLUTIONS:
+        got = hashlib.md5(text.encode("utf-8")).hexdigest()
+        good = got.startswith(prefix)
+        print(f"published solution ({where}): MD5 starts {prefix} -> "
+              f"{'OK' if good else 'FAIL, got ' + got[:8]}")
+        ok = ok and good
+
+    # Part 4: the Block 76 prefix filter, tested against the pair the author's
     # own escrow-adjacent comments confirm satisfies both published prefixes.
     filt = block76_filter("format", "before TOMI")
     part3 = filt["solution_prefix_ok"] and filt["full_prefix_ok"]
@@ -189,8 +221,10 @@ def selftest() -> bool:
     if ok:
         print("SELFTEST OK")
         print(
-            "Note: this certifies the MD5-to-address transform and the 2 helper "
-            "functions. It does NOT reproduce Block 77 Stage One end to end, "
+            "Note: this certifies the MD5-to-address transform, the front of the "
+            "pipeline against 2 solutions the author published herself, and the "
+            "2 helper functions. It does NOT reproduce Block 77 Stage One end to "
+            "end, "
             "since that needs Hal Finney's bitcointalk post text, which this "
             "repository does not ship (third-party copyrighted content). Feed "
             "that text yourself to apply_stage_one_rule() to reproduce it."

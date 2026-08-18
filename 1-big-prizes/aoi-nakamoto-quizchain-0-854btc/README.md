@@ -87,7 +87,17 @@ chapter's raw text. This rule is proven on the solved sibling lot Block 77
 Stage One: of that post's 16 paragraphs, the 4 whose first letter is not I, T,
 A, S or M get their first letter lowercased and their last letter uppercased,
 and the paragraphs are joined with a blank line; this reproduces
-`19TbyN5KCg1Lg7qHwezifsLVcdSa2Rj5KN` exactly. The "Second" chapter contains the
+`19TbyN5KCg1Lg7qHwezifsLVcdSa2Rj5KN` exactly.
+
+The author states the selector herself, defending the puzzle in that thread:
+"if you take all the paragraphs not starting with a letter in \"Satoshi\" and
+look at the last letters of these you get STNM", which she reads as a signature
+for Satoshi Nakamoto. Her letter set is S, A, T, O, H, I, not the I, T, A, S, M
+recorded above; the two agree on the solved lot but not in general, and hers is
+the one to carry forward. Applied to the "Second" chapter it marks 40 of the 90
+paragraphs, whose first four end in s, t, n and m, so the signature is present
+there too. No reading of that selection reaches either Real Big Block address
+(see `analysis/tested.md`). The "Second" chapter contains the
 same paragraph-initial pattern 3 times on its own, plus a quotation from the
 Finney post, but no combination of applying the rule to these 4 candidate
 groups (nor to the many related selections in `analysis/tested.md`) reproduces

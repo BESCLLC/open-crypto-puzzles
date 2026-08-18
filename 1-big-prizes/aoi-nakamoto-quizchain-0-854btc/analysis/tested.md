@@ -193,6 +193,96 @@ repository's fact 6 records that no archive of the Wattpad chapter exists, but
 that check covered the chapter, not the author's Reddit posts, which are on a
 far more heavily crawled host.
 
+## Block 2's question text, pinned exactly (2026-08-18)
+
+A player asked her, in the Block 2 thread, for the hash of the full Question
+text *without* the letter changes, so that he could check his own transcription
+before starting -- he was not on Windows and his copy gave him LF line breaks.
+She answered:
+
+> Thank you for asking. I really like the answer, turns out that the first seven
+> digits of that MD5 hash are 7759227, with three numbers 7 turning up there.
+
+That is 28 bits over the unmodified text, with no flip subset and no key
+derivation in the way: a direct check on a transcription. Running the recovered
+post through it lands on
+
+    md5 7759227d7406d8230d7e3a8f7b9846d7
+
+which measures the text and its serialization outright, and settles two things
+that had been assumed:
+
+| | Measured |
+|---|---|
+| Separator | LF LF. Not CR LF CR LF, though the post says "13 10 13 10" |
+| Paragraph 5 | one paragraph: "...outing himself. Even after I explained..." |
+| Quotes and apostrophes | straight; the text is plain ASCII throughout |
+| The transcription | correct, character for character |
+
+The separator is the useful correction. She describes typing CR LF CR LF, and
+her instruction is to copypaste from the rendered post -- and what a copy of a
+rendered Reddit post produces is LF LF. What she typed and what her tool hashed
+are not the same thing. The same distinction is the open question on the Real
+Big Block, where the argument has been about what her browser produced from the
+Wattpad page rather than what she typed into it.
+
+It also kills the reading that her worked example implies: "I" to "i" and
+"himself" to "himselF" in one step only pairs a paragraph's first and last
+letter if that paragraph ends at "himself." The hash says it does not.
+
+Two more published solutions check out on the same front of the pipeline, and
+are now part of `tools/oracle.py --selftest`:
+
+| Block | Solution, exactly as she gave it | Announced prefix | MD5 |
+|---|---|---|---|
+| Quizchain2 Block 67 | `Thomas TOMI Harold Thomas Finney II` | f47 | f4738a... |
+| Grycoin chain Block 1 | `Still 21st Century` | 4c4 | 4c4148... |
+
+## Block 2 case changes, on the pinned text (2026-08-18)
+
+With the base text pinned, the only unknown left on Block 2 is which letters
+change case, and her published 3c6 prefix filters that for free.
+
+| Family | Candidates | Result |
+|---|---|---|
+| Every subset of the 10 paragraph-initial and 10 paragraph-final letters (2^20) | 1,048,576 | 0 match |
+| Paragraph initials alone, all subsets | 1,024 | 0 match |
+| Paragraph finals alone, all subsets | 1,024 | 0 match |
+| Every 1 or 2 letter case change anywhere in the text | 717,004 | 0 match |
+
+The first row is the important one: it is exhaustive over the entire
+first-letter-down, last-letter-up family at paragraph granularity, in both the
+forced and the toggled reading, since forcing is a subset of toggling here. So
+Block 2's answer changes at least one letter that is neither a paragraph's first
+nor its last -- which is consistent with her own example, where "himself" ends a
+sentence in the middle of a paragraph rather than the paragraph itself.
+
+## The selection rule, in her own words (2026-08-18)
+
+Defending the puzzle in the Block 77 thread, she states the mechanism directly:
+
+> There is no way to dispute that if you take all the paragraphs not starting
+> with a letter in "Satoshi" and look at the last letters of these you get STNM.
+>
+> I assume you understand that STNM would be a reasonable way to sign as
+> "Satoshi Nakamoto".
+
+The selector is the letter set of "Satoshi", which is S, A, T, O, H and I. This
+folder has been recording it as I, T, A, S, M, which is the same idea with M in
+place of O and H -- close enough to reproduce the solved lot, evidently, but not
+what she says. Applied to the "Second" chapter's 90 paragraphs, the S, A, T, O,
+H, I selector marks 40 of them, and the first four marked paragraphs end in
+
+    s, t, n, m
+
+so her signature is present in the chapter under her own stated rule. Neither
+that selection nor the narrower readings of it reach either Real Big Block
+address (all marked; the first four; those whose last letter is one of s, t, n,
+m; every 1 to 3 subset of those 24), across LF, LF LF, LF LF LF and CR LF CR LF
+separators, both letter positions separately and together, derivation indices 0
+to 19. That is 4 more selection hypotheses on top of the ledger above, and it
+leaves the chapter's byte form as the live question rather than the rule.
+
 ## Block 2 reversal, from the full post text (2026-08-18)
 
 The Block 2 post was recovered in full, so the reversal that the section above
