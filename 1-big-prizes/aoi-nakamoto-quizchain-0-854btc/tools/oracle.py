@@ -84,6 +84,19 @@ PUBLISHED_SOLUTIONS = [
 BLOCK2_QUESTION_MD5_PREFIX = "7759227"
 BLOCK2_QUESTION_SEPARATOR = "\n\n"
 
+# Quizchain2 Block 2's complete published solution, reproduced end to end. She
+# wrote every step out: a master string from the Wattpad chapter, MD5'd to
+# entropy, BIP39'd, the 2nd private key of that wallet taken as a "strong
+# password", MD5'd again, BIP39'd again, and the 1st private key of the second
+# wallet is the block's key. Reproducing the whole chain certifies MD5 -> entropy,
+# entropy -> BIP32 private key at indices 0 and 1, and WIF encoding, all against
+# her own numbers rather than a single point.
+BLOCK2_MASTER_STRING = '"BaSCifCatfAaa1i"Metamon'
+BLOCK2_STEP1_ENTROPY = "2941774a2abec9f30c7d6777d1d53d91"
+BLOCK2_STEP4_WIF = "L5Z66qPmUkTAsWQywjRNHDxHrX6J1X1SQedp6V8QsbaXR7rGd6ex"
+BLOCK2_STEP5_ENTROPY = "7b44cc11c866ab85b7078c43ad6795e1"
+BLOCK2_BLOCK_KEY_WIF = "KzFB7hBGmLBqm8nqVCVLBmgyd1NxnoJXZUhE377QL4T2iy5rw4Wz"
+
 # Initials rule confirmed on the solved sibling lot Block 77 Stage One: of a
 # text's paragraphs, the ones whose first letter is NOT one of these get the
 # case-flip rule applied (see _flip_case). ITASM are the initials that appear
@@ -211,6 +224,21 @@ def selftest() -> bool:
               f"{'OK' if good else 'FAIL, got ' + got[:8]}")
         ok = ok and good
 
+    # Part 3b: the full Quizchain2 Block 2 chain, reproduced end to end from her
+    # own published worked example.
+    e1 = hashlib.md5(BLOCK2_MASTER_STRING.encode("utf-8")).hexdigest()
+    step1 = e1 == BLOCK2_STEP1_ENTROPY
+    wif4 = derive_wif(bytes.fromhex(e1), 1)
+    step4 = wif4 == BLOCK2_STEP4_WIF
+    e2 = hashlib.md5(wif4.encode("utf-8")).hexdigest()
+    step5 = e2 == BLOCK2_STEP5_ENTROPY
+    keywif = derive_wif(bytes.fromhex(e2), 0)
+    step7 = keywif == BLOCK2_BLOCK_KEY_WIF
+    chain = step1 and step4 and step5 and step7
+    print(f"Quizchain2 Block 2 chain: master string -> MD5 -> 2nd key -> MD5 -> "
+          f"block key -> {'OK' if chain else 'FAIL'}")
+    ok = ok and chain
+
     # Part 4: the Block 76 prefix filter, tested against the pair the author's
     # own escrow-adjacent comments confirm satisfies both published prefixes.
     filt = block76_filter("format", "before TOMI")
@@ -221,10 +249,11 @@ def selftest() -> bool:
     if ok:
         print("SELFTEST OK")
         print(
-            "Note: this certifies the MD5-to-address transform, the front of the "
-            "pipeline against 2 solutions the author published herself, and the "
-            "2 helper functions. It does NOT reproduce Block 77 Stage One end to "
-            "end, "
+            "Note: this certifies the MD5-to-address transform end to end, "
+            "including the complete Quizchain2 Block 2 chain (master string to "
+            "block private key) and 2 further published solutions, all against "
+            "the author's own numbers. It does NOT reproduce Block 77 Stage One "
+            "end to end, "
             "since that needs Hal Finney's bitcointalk post text, which this "
             "repository does not ship (third-party copyrighted content). Feed "
             "that text yourself to apply_stage_one_rule() to reproduce it."

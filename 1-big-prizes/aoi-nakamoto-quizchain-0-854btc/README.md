@@ -157,9 +157,19 @@ holds the rights to. Supply your own candidate text to test it.
 vector, given in the round-1 corpus: entropy `2941774a2abec9f30c7d6777d1d53d91`,
 at BIP44 index 1 ("my 2nd private key"), derives WIF
 `L5Z66qPmUkTAsWQywjRNHDxHrX6J1X1SQedp6V8QsbaXR7rGd6ex` exactly, and that WIF
-appears at no other index. This certifies the MD5-to-address transform itself,
-without needing any third-party text. The selftest also checks the
-`--flip-case` helper against a synthetic (non-puzzle) example sentence, and the
+appears at no other index.
+
+That entropy is the middle of a longer chain she published in full for
+Quizchain2 Block 2, and the selftest now reproduces the whole of it: her master
+string `"BaSCifCatfAaa1i"Metamon` MD5s to that entropy, its 2nd private key is
+the WIF above, that WIF MD5s to `7b44cc11c866ab85b7078c43ad6795e1`, and the 1st
+private key of that second wallet is the block's key
+`KzFB7hBGmLBqm8nqVCVLBmgyd1NxnoJXZUhE377QL4T2iy5rw4Wz`. Reproducing the chain
+end to end certifies MD5-to-entropy, entropy-to-private-key at indices 0 and 1,
+and WIF encoding, all against her own numbers and without any third-party text.
+The selftest also reproduces two further published solutions by MD5 prefix
+(`Thomas TOMI Harold Thomas Finney II` to f47, `Still 21st Century` to 4c4),
+checks the `--flip-case` helper against a synthetic example, and checks the
 `--block76-filter` helper against the community-found `format` / `before TOMI`
 pair.
 
