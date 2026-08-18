@@ -117,3 +117,46 @@ chain found by search. 0 match anywhere. This is reported as a targeted, not
 exhaustive, negative: the true solution may use vocabulary outside the corpora
 swept (the author's own writing and 2 general-purpose dictionaries), and the
 block may simply be misconfigured (see README).
+
+## Contiguous-range serialisation sweep, with the superseded address as a
+## calibration target (2026-08-18)
+
+Every earlier row selects paragraphs as an arbitrary subset, up to 2^17 of them.
+A browser selection is not arbitrary: it is a drag, and a drag is contiguous.
+The realistic space is therefore every contiguous range of the chapter's lines,
+not every subset, and that space is small enough to exhaust outright.
+
+Set: all 4,095 contiguous ranges of the chapter's 90 lines as returned by the
+Wattpad API, crossed with 8 paragraph separators (LF, LF LF, CRLF, CRLF CRLF,
+CR, LF CR LF, space, non-breaking space), 2 quotation conventions (the smart
+quotes as stored, and an ASCII fold of them), 5 edge conventions (none, trailing
+LF, trailing CRLF, leading LF, leading BOM), and 2 readings of the certified
+case-flip rule (applied to the range, or not). 655,200 candidate texts,
+6 derivation indices each.
+
+Targets: both live escrows, and `1EFojcAo2vbhRGCGCa7q8Wwvzss28mhQYC`, the
+superseded address funded 2019-07-24 from the pre-rehash solution. That third
+address is the useful one. It holds nothing, so hitting it wins no money, but
+the author states the live version is the same text with one line break changed
+to two, so pinning the byte format that produces it would leave the live
+address one documented step away.
+
+Result: 0 match on all three. Witness: a candidate drawn from the swept space
+itself, planted with its own derived address and recovered by the run.
+Duration: 6.8 minutes at 1,609 candidates/second on 4 CPU cores.
+
+What this rules out is worth stating precisely, because it points somewhere. The
+failure to reach the superseded address is the informative half. That address
+should be the easy case: the chapter as published, one line break between
+paragraphs, no modification of any kind. If the API's text were byte-faithful to
+what the author copied in 2019, some contiguous range of it under some ordinary
+separator should reproduce it. None does. So the remaining discrepancy is not in
+which paragraphs were selected, nor in how they were joined; it is in the source
+bytes themselves. Something the author hashed is absent from the text the API
+returns today, which is consistent with her own statement that she added extra
+line breaks and with the API storing none.
+
+The next test is therefore the chapter's raw HTML rather than its extracted
+text: empty paragraph elements, `&nbsp;` entities and `<br>` tags all survive in
+the markup and all vanish from a text extraction, and any of the three would
+change the hash while leaving the visible chapter identical.
