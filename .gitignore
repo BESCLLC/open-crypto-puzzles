@@ -3,3 +3,7 @@ __pycache__/
 .DS_Store
 .venv/
 *.egg-info/
+
+# scratch copies made by planted-target verifications
+**/tools/_*.py
+**/RBB_HIT.txt
