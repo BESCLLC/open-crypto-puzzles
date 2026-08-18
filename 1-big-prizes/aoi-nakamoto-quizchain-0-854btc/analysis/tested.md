@@ -425,3 +425,27 @@ on this block -- no published MD5 prefix -- so every candidate costs a full
 PBKDF2-HMAC-SHA512 at 2048 iterations, about 1.9 ms, which is the floor on a
 CPU. k up to 3 is roughly an hour on a small machine and is exhaustive for that
 reading. k = 4 is 224 million and needs a GPU.
+
+## Two conventions the author states outright for the Real Big Block (2026-08-18)
+
+The "Real Big Block Discussion" thread settles two things that earlier work had
+inferred from sibling blocks rather than from this one.
+
+Separator. A player asks whether "two line breaks" means one Enter or two. She
+answers: "the second one. Hit enter twice. This displays in Ascii as 13 10 13
+10, according to asciivalue.com." That is CR LF CR LF, not LF LF. Stage One and
+Grycoin Block 2 were measured at LF LF, but they are different sources; the Real
+Big Block is the Wattpad chapter, where she added the extra breaks, and she
+states its separator directly. Earlier chapter sweeps tried CR LF CR LF only on
+whole-group subsets, never on the exhaustive small marked-set search, which had
+used LF LF and LF alone.
+
+Index. Discussion point 4: "I just noticed that the 7th private key in the list
+for this wallet contains the number 7 three times ... Maybe should have sent the
+funds to that address. But the first one also has some amazing properties." She
+sent the funds to the first address, so the derivation index is 0. This closes
+the block-number-as-index idea (from Quizchain2 Block 2, "the second private key
+because this was block 2") for the Real Big Block specifically.
+
+`tools/chapter_sweep.py` was rerun with CR LF CR LF and index 0 across the full
+rule and every 1, 2 and 3 paragraph marked set. [result pending]
