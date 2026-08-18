@@ -98,3 +98,43 @@ What would kill it, in the useful sense: nothing kills this lead outright; it
 stays open as a standing invitation, same as any human-reasoned wordplay block
 in the series.
 Cost: minutes per candidate; no sweep implied.
+
+## 0. Grycoin Block 2 as a second certification vector (2026-08-18)
+
+Two statements recovered from the author's 2019 activity reorder everything
+above.
+
+**She removed a twist rather than adding one.** Moving the prize from
+`1EFojcAo2vbhRGCGCa7q8Wwvzss28mhQYC` to the live escrow on 2019-07-30, she said
+she "wanted to remove one of the twists". The live target is therefore a simpler
+transform than the superseded one, not a variant of equal difficulty. The
+2026-08-18 sweep in `analysis/tested.md` treated the dead address as the easy
+calibration case, on the reasoning that it predates the modification; that
+reasoning is backwards. The dead address carries an extra complication that the
+live one does not.
+
+**She published a worked example, after the rehash, on purpose.** Grycoin Block
+2, posted 2019-08-02, is described as deliberately written to demonstrate the
+exact format used in both stages of block 77, case-flip and copy-paste rules
+together. Every block in the series except this folder's two was solved and
+swept, so Block 2 is a solved question-and-address pair produced by the same
+transform, and produced *after* the author had settled on the format the live
+escrow uses.
+
+That makes it a second certification vector, and a better one than Block 77
+Stage One in two respects: it needs no third-party text, since the question is
+her own writing, and it encodes the post-rehash format rather than the
+pre-rehash one.
+
+What would confirm it: reproducing Block 2's escrow address from its published
+question text. The serialization that does so is then the author's actual
+copy-paste convention, measured rather than guessed, and applying it to the
+Wattpad chapter is a single derivation rather than a sweep.
+What would kill it: no serialization of Block 2's question reaching its address,
+which would mean the transform is not uniform across the series after all.
+Cost: minutes, once the question text and escrow address are in hand.
+
+The author also stated, in the Real Big Block discussion thread, that "once
+someone figures out the format for the first stage, they will also have a big
+hint for the format of this second stage", which is consistent with one
+transform across both.
