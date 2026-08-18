@@ -257,9 +257,9 @@ Block 2's answer changes at least one letter that is neither a paragraph's first
 nor its last -- which is consistent with her own example, where "himself" ends a
 sentence in the middle of a paragraph rather than the paragraph itself.
 
-## The selection rule, in her own words (2026-08-18)
+## The selection rule, measured on the solved lot (2026-08-18)
 
-Defending the puzzle in the Block 77 thread, she states the mechanism directly:
+Defending the puzzle in the Block 77 thread, she states the mechanism:
 
 > There is no way to dispute that if you take all the paragraphs not starting
 > with a letter in "Satoshi" and look at the last letters of these you get STNM.
@@ -267,21 +267,30 @@ Defending the puzzle in the Block 77 thread, she states the mechanism directly:
 > I assume you understand that STNM would be a reasonable way to sign as
 > "Satoshi Nakamoto".
 
-The selector is the letter set of "Satoshi", which is S, A, T, O, H and I. This
-folder has been recording it as I, T, A, S, M, which is the same idea with M in
-place of O and H -- close enough to reproduce the solved lot, evidently, but not
-what she says. Applied to the "Second" chapter's 90 paragraphs, the S, A, T, O,
-H, I selector marks 40 of them, and the first four marked paragraphs end in
+Her description is loose, and the post she is describing settles it. Hal
+Finney's "Bitcoin and me" was fetched from bitcointalk rather than transcribed
+and run against Block 77 Stage One's own escrow,
+`19TbyN5KCg1Lg7qHwezifsLVcdSa2Rj5KN`, which is solved and spent. It reproduces:
 
-    s, t, n, m
+| | Measured |
+|---|---|
+| Paragraphs | 16, initials `IFFWIWTATSMATIAT` |
+| Selector | keep I, T, A, S, M; mark the other 4 |
+| Marked paragraphs' last letters | `s`, `t`, `n`, `m` -- STNM |
+| Rule | first letter lowered, last letter raised |
+| Separator | LF LF |
+| Derivation index | 0 |
 
-so her signature is present in the chapter under her own stated rule. Neither
-that selection nor the narrower readings of it reach either Real Big Block
-address (all marked; the first four; those whose last letter is one of s, t, n,
-m; every 1 to 3 subset of those 24), across LF, LF LF, LF LF LF and CR LF CR LF
-separators, both letter positions separately and together, derivation indices 0
-to 19. That is 4 more selection hypotheses on top of the ledger above, and it
-leaves the chapter's byte form as the live question rather than the rule.
+S, A, T, O, H, I taken literally from her sentence marks 5 paragraphs instead of
+4 and reads STNMT, and does not reproduce the address. The full letter set of
+"Satoshi Nakamoto", which adds N and K, marks the same 4 as I, T, A, S, M here,
+so this post cannot separate those two readings. It does rule out hers as
+written. A text with more distinct paragraph initials will separate them, and
+the "Second" chapter has 90 paragraphs, so it will.
+
+This is the calibration the folder had been asserting from the private research
+without a reproduction in the repository. It now has one, and it was measured
+from the source's own bytes.
 
 ## Block 2 reversal, from the full post text (2026-08-18)
 

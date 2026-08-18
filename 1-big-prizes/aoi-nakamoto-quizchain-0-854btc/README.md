@@ -89,15 +89,20 @@ A, S or M get their first letter lowercased and their last letter uppercased,
 and the paragraphs are joined with a blank line; this reproduces
 `19TbyN5KCg1Lg7qHwezifsLVcdSa2Rj5KN` exactly.
 
-The author states the selector herself, defending the puzzle in that thread:
-"if you take all the paragraphs not starting with a letter in \"Satoshi\" and
-look at the last letters of these you get STNM", which she reads as a signature
-for Satoshi Nakamoto. Her letter set is S, A, T, O, H, I, not the I, T, A, S, M
-recorded above; the two agree on the solved lot but not in general, and hers is
-the one to carry forward. Applied to the "Second" chapter it marks 40 of the 90
-paragraphs, whose first four end in s, t, n and m, so the signature is present
-there too. No reading of that selection reaches either Real Big Block address
-(see `analysis/tested.md`). The "Second" chapter contains the
+This was re-derived from the post's own bytes on 2026-08-18, fetched rather than
+transcribed, and it holds exactly: 16 paragraphs, I, T, A, S, M as the selector,
+first letter lowered and last letter raised on the 4 it does not keep, joined
+with LF LF, derivation index 0.
+
+The author describes the selector differently, defending the puzzle in that
+thread: "if you take all the paragraphs not starting with a letter in \"Satoshi\"
+and look at the last letters of these you get STNM", which she reads as a
+signature for Satoshi Nakamoto. Her description is loose. S, A, T, O, H, I alone
+marks 5 paragraphs of the Finney post, whose last letters read STNMT; I, T, A,
+S, M marks 4 and gives STNM, and it is the one that reproduces the address. The
+full letter set of "Satoshi Nakamoto" (adding N and K) picks the same 4 here, so
+the post cannot separate those two readings -- but it does rule out hers as
+written, and a longer text will separate them. The "Second" chapter contains the
 same paragraph-initial pattern 3 times on its own, plus a quotation from the
 Finney post, but no combination of applying the rule to these 4 candidate
 groups (nor to the many related selections in `analysis/tested.md`) reproduces
