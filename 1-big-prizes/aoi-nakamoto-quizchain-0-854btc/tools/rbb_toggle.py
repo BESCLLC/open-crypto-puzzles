@@ -157,21 +157,37 @@ def main():
 
         t0 = time.time()
         jobs = max(1, a.jobs)
-        step = (total + jobs - 1) // jobs
-        bounds = [(i * step, min(total, (i + 1) * step)) for i in range(jobs)]
+        # Many small units rather than one per worker, consumed as they finish,
+        # so a hit stops the run instead of waiting for every shard to drain.
+        unit = max(50_000, total // (jobs * 40) + 1)
+        bounds = [(i, min(total, i + unit)) for i in range(0, total, unit)]
+        hits, done = [], 0
         if jobs == 1:
             _init(text, tg, a.toggles, a.indices)
-            res = [_work(bounds[0])]
+            for b in bounds:
+                hits += _work(b)
+                done += b[1] - b[0]
+                if any(h[0] != wit for h in hits):
+                    break
         else:
             with mp.Pool(jobs, initializer=_init,
                          initargs=(text, tg, a.toggles, a.indices)) as pool:
-                res = pool.map(_work, bounds)
+                for res in pool.imap_unordered(_work, bounds):
+                    hits += res
+                    done += unit
+                    if any(h[0] != wit for h in hits):
+                        pool.terminate()
+                        break
+                    el = time.time() - t0
+                    print(f"\r  {min(done,total):,}/{total:,} "
+                          f"{done/max(el,1e-9):,.0f}/s  eta "
+                          f"{(total-done)/max(done/max(el,1e-9),1):,.0f}s",
+                          end="", flush=True)
         el = max(time.time() - t0, 1e-9)
-        hits = [h for r in res for h in r]
         got_wit = any(h[0] == wit for h in hits)
         real = [h for h in hits if h[0] != wit]
-        print(f"  swept {total:,} in {el/60:.1f} min ({total/el:,.0f}/s), "
-              f"witness {'OK' if got_wit else 'MISSING'}")
+        print(f"\n  scanned {min(done,total):,} of {total:,} in {el/60:.1f} min "
+              f"({done/el:,.0f}/s), witness {'OK' if got_wit else 'not yet seen'}")
         for addr, i, combo, md5, cand in real:
             print("\n" + "=" * 72)
             print(f"MATCH  {tg[addr]}")
