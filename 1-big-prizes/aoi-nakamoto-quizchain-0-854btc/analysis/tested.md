@@ -192,3 +192,59 @@ of the Reddit thread is the most likely source and has not been checked. The
 repository's fact 6 records that no archive of the Wattpad chapter exists, but
 that check covered the chapter, not the author's Reddit posts, which are on a
 far more heavily crawled host.
+
+## Block 2 reversal, from the full post text (2026-08-18)
+
+The Block 2 post was recovered in full, so the reversal that the section above
+records as blocked could finally run. It does not solve the block.
+
+The question body is the 10 paragraphs from "I thought I would write a bit about
+the format for block 77" through "it should be faster to solve by the thinking
+only method." -- her stated start, the first "I", and her stated stop, the period
+after "method". Everything her post fixes was taken as fixed: the separator she
+spells out as ASCII 13 10 13 10, no whitespace at either edge, and the free
+12-bit filter "First three digits of MD5 hash are 3c6", which rejects candidates
+before any key derivation and makes the whole sweep cost nothing.
+
+What was left free is what a copy out of a browser can change, plus the one
+thing the recovered text cannot settle by itself. Her worked example changes
+"I" to "i" and "himself" to "himselF" in the same step, which only makes sense
+as one rule over one paragraph if that paragraph ends at "himself." -- yet in
+the recovered text the sentence continues. A paste can merge two paragraphs but
+cannot invent one, so every sentence boundary inside every recovered paragraph
+was searched as a possible lost break.
+
+| Dimension | Values |
+|---|---|
+| Lost paragraph breaks | all 2^5 subsets of the 5 internal sentence boundaries |
+| Flip subsets | every subset of the resulting 10 to 15 paragraphs |
+| Case rule | force (first lowered, last raised) and toggle |
+| Quotes and apostrophes | straight, curly, and each independently |
+| Ellipsis | 3 periods and the single character |
+| Separator | CRLFCRLF, LFLF, CRLF, LF |
+| Encoding | UTF-8 and cp1252 |
+| Derivation index | 0 to 9 |
+
+27,869,184 texts, 63 seconds on 4 cores. 6,998 passed the 3c6 filter against a
+chance expectation of 6,804, which is the first result worth reading: the prefix
+hits land exactly where random texts would put them, with no excess anywhere in
+the grid. 0 of the 69,980 derived addresses is the escrow.
+
+Witness: a point of the grid was picked (split mask 10110, curly quotes and
+apostrophes, CRLFCRLF, cp1252, toggle, a specific flip subset), its own address
+derived at index 3, the searcher retargeted at that address, and the searcher
+recovered exactly that point. A negative from a searcher that cannot find a
+planted positive is worthless; this one can.
+
+A single correct point inside that grid would have been found, so the grid does
+not contain it. The recovered text differs from what the author posted by
+something none of these dimensions varies -- a word, a comma, a capital letter.
+The transcription came through screenshots, which is exactly where that kind of
+difference survives unnoticed.
+
+What would unblock it: `tools/fetch_sources.py`, run anywhere with open outbound
+HTTPS. Reddit's JSON endpoint returns `selftext`, the raw markdown the author
+typed, character for character, which removes the transcription from the loop
+entirely. The same fetch collects the Block 77 Stage One post, whose reversal is
+already reproduced and would then be re-derivable from pristine bytes as a
+witness, and both forms of the Wattpad chapter.
