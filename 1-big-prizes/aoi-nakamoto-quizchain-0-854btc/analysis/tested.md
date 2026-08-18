@@ -160,3 +160,35 @@ The next test is therefore the chapter's raw HTML rather than its extracted
 text: empty paragraph elements, `&nbsp;` entities and `<br>` tags all survive in
 the markup and all vanish from a text extraction, and any of the three would
 change the hash while leaving the visible chapter identical.
+
+## Grycoin Block 2 as a worked example, and why the reversal could not run yet
+## (2026-08-18)
+
+Block 2's escrow is `1tzieUfbeQghz2zjDeGHcAEfzCRgX6eLi`, funded with 700,000
+sats on 2019-08-01 in transaction
+`f11eca9925c7809210796a3c8d95677dfaf0becb4f6df4c74e7261c3011a2e3c`, and it is
+spent. The block was solved, so the transform demonstrably produces claimable
+keys, and reversing that solved pair would measure the author's conventions
+rather than leaving them to be guessed: how many letters get toggled, what her
+line breaks were byte for byte, which derivation index she used, and where her
+copy started.
+
+The reversal cannot run yet because the question text is not recovered. Reddit
+is refusing both the JSON endpoint and the old interface to scrapes, and the
+best reconstruction available from surviving snippets is provably incomplete:
+the author's instruction is to "stop with the period after method", and the only
+occurrence of that word in the reconstruction sits inside the instruction
+itself, followed by a quotation mark and a comma rather than a period. The
+question body that ends in "method." is absent.
+
+Tested anyway, in case the reconstruction was closer than it looked: 10 base
+readings of it, crossed with 0, 1 and 2 letter case toggles, 14.3 minutes, 0
+match against the Block 2 escrow. That is the expected result for a text missing
+its ending, and it is recorded here only so the same partial reconstruction is
+not swept again.
+
+What would unblock it: any pristine copy of the Block 2 post. A Wayback capture
+of the Reddit thread is the most likely source and has not been checked. The
+repository's fact 6 records that no archive of the Wattpad chapter exists, but
+that check covered the chapter, not the author's Reddit posts, which are on a
+far more heavily crawled host.
