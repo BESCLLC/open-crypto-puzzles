@@ -347,3 +347,81 @@ typed, character for character, which removes the transcription from the loop
 entirely. The same fetch collects the Block 77 Stage One post, whose reversal is
 already reproduced and would then be re-derivable from pristine bytes as a
 witness, and both forms of the Wattpad chapter.
+
+## The chapter, at its real length (2026-08-18)
+
+Every Real Big Block row above this section was run against a 90-paragraph,
+9.5 KB rendering of the "Second" chapter. The chapter is 273 paragraphs and
+45,450 characters. The ledger was searching roughly a fifth of the text.
+
+The mistake is easy to make and hard to notice. Wattpad serves a part's text
+from a paginated endpoint, `apiv2/?m=storytext&id=720888559&page=N`, and a fetch
+that omits the page parameter, or stops early, returns a prefix that looks like
+a complete chapter: it starts at the title and ends mid-sentence only if you
+check. Completeness is checkable outright -- the part metadata reports
+`length` 45451, `pages` 12, `wordCount` 9091, and the 273 paragraphs joined with
+a blank line come to 45450 characters, which is that length less one trailing
+newline. Page 13 returns nothing.
+
+### The signs, located
+
+The chapter documents its own mechanism. Paragraph 228 reads
+
+> All paragraphs except for four, which start with F F and W W.
+
+describing the Finney post it goes on to quote, and paragraph 236 is the bare
+string `STNM`, paragraph 238 `I STNM.`. So the marked paragraphs are the ones
+whose initial breaks the pattern, and their last letters carry the signature.
+
+That pattern occurs exactly 4 times in 273 paragraphs, and every one of them
+spells `stnm` in its final letters. They are also the only `stnm` runs anywhere
+in the text:
+
+| Paragraphs | Initials | Finals |
+|---|---|---|
+| 4 to 7 | `FFWW` | `stnm` |
+| 92 to 95 | `FFWW` | `stnm` |
+| 167 to 170 | `FFWW` | `stnm` |
+| 230 to 234 | `FFWIW` | `stngm`, marked 230 231 232 234 |
+
+The fourth is Hal Finney's post quoted verbatim, carrying its own `IFFWIW`
+shape, which is why its marked four skip a paragraph. This folder already
+recorded "the 3 planted paragraph groups plus the Finney quote" as tested; that
+test ran on the 90-paragraph text, where 3 of the 4 groups lie past the end.
+
+### What that structure does not do
+
+| Hypothesis | Candidates | Result |
+|---|---|---|
+| Letter-set selectors (ITASM, SATOSHI, NAKAMOTO, AOINAKAMOTO, HALFINNEY, combined) x 3 rule modes x 4 separators x 4 trailers x 36 text variants | 48,384 | 0 match |
+| The chapter with nothing changed, every variant and separator | 864 | 0 match |
+| First or last k of the letter-set-marked paragraphs, k = 1 to 118 | approximately 57,000 | 0 match |
+| Prefix and suffix truncations at every paragraph, with and without the rule | approximately 26,000 | 0 match |
+| The rule applied inside every contiguous run of paragraphs | approximately 297,000 | 0 match |
+| Every subset of the 4 FFWW groups, 3 rule modes, 4 separators, 2 trailers, 36 variants, indices 0 to 19 | approximately 14,000 | 0 match |
+| Every subset of the 16 individual FFWW paragraphs, 8 variants, 2 separators | 1,048,576 | 0 match |
+| FFWW group subsets crossed with every subset of the 10 extra sign candidates (the paragraph Finney's shape skips, `STNM`, `I STNM.`, and the 7 paragraphs that already end in a capital) | approximately 262,000 | 0 match |
+| The same crossed with truncations | approximately 140,000 | 0 match |
+
+The text variants cover what a browser copy of that page can change: `<br>`
+inside a `<p>` as a newline, a paragraph break or a space; the 6 non-breaking
+spaces kept, spaced or dropped; per-paragraph whitespace kept or stripped; the
+title paragraph in or out. The chapter contains no curly quotes, dashes or
+ellipsis characters at all, so those dimensions collapse.
+
+The FFWW structure is not a coincidence -- 4 occurrences in 273 paragraphs, all
+spelling the signature, in a text that names the rule in prose. But flipping
+some subset of exactly those paragraphs is now exhausted. Either the marked set
+includes paragraphs outside them, or the bytes her 2019 browser produced differ
+from the API's HTML in a way this parse does not reproduce.
+
+### What is running
+
+Her own description of the format is "keep the whole long text and change only a
+couple of letters in their capitalization". Flipping one paragraph changes two
+letters, so one to three flipped paragraphs anywhere in the chapter is the
+literal reading, and it is only 3.4 million candidates. There is no free filter
+on this block -- no published MD5 prefix -- so every candidate costs a full
+PBKDF2-HMAC-SHA512 at 2048 iterations, about 1.9 ms, which is the floor on a
+CPU. k up to 3 is roughly an hour on a small machine and is exhaustive for that
+reading. k = 4 is 224 million and needs a GPU.

@@ -25,7 +25,7 @@ Block and a short answer to a word riddle for Block 76.
 | Puzzle type | bip39-seed, word-selection |
 | Target format | source text (candidate answer), MD5 to 128-bit entropy, BIP39 mnemonic, BIP44 `m/44'/0'/0'/0/i` for i = 0 to 5, P2PKH address |
 | Certified oracle | yes: `tools/oracle.py --selftest` (certified against the author's own published entropy-to-WIF vector; see "Certified against" for what is and is not covered) |
-| What remains | Real Big Block: the exact source text the author hashed on 2019-07-30 (the transform and rule are confirmed). Block 76: a short answer to a published word riddle, since no derivation of the one candidate chain found by search reaches the address |
+| What remains | Real Big Block: which paragraphs of the chapter carry the signs; the transform, the rule and the chapter's exact bytes are all confirmed. Block 76: a short answer to a published word riddle, since no derivation of the one candidate chain found by search reaches the address |
 | Series | this folder covers the 2 open lots of the approximately 90-block Quizchain series; the rest were solved by other readers in 2019 |
 
 ## The puzzle as published
@@ -106,12 +106,22 @@ written, and a longer text will separate them. The "Second" chapter contains the
 same paragraph-initial pattern 3 times on its own, plus a quotation from the
 Finney post, but no combination of applying the rule to these 4 candidate
 groups (nor to the many related selections in `analysis/tested.md`) reproduces
-either the current or the superseded Real Big Block address. The Wattpad API
-confirms the chapter's `modifyDate` as 2019-07-23T23:12:04Z, 7 days before the
-current escrow was funded, so the text available today predates the funding and
-is very likely the version that was hashed; what is not settled is which exact
-byte sequence the author's own tool read from it, since Wattpad's storage
-normalizes away the blank lines she describes typing (see "Open leads").
+either the current or the superseded Real Big Block address.
+
+Those 4 groups were re-located on 2026-08-18 in the chapter at its real length,
+which is 273 paragraphs and 45,450 characters, not the 90-paragraph rendering
+every earlier test used. Wattpad serves a part's text from a paginated endpoint,
+and a fetch that stops early returns a prefix that reads like a whole chapter;
+the part metadata settles it, reporting `length` 45451 and `pages` 12, and page
+13 returns nothing. Three of the 4 groups lie past paragraph 90, so only the
+first had ever been tested where it actually sits. All 4 spell `stnm` in their
+final letters and they are the only such runs in the text, but testing them at
+their real indices, and every subset of their 16 paragraphs, still reaches
+neither address.
+
+The same metadata dates the chapter: `modifyDate` 2019-07-23T23:12:04Z, 7 days
+before the current escrow was funded, so the bytes served today are the bytes
+she hashed. What is not settled is which paragraphs carry the signs.
 
 For Block 76, a community player found, in 2019, that `solution = "format"`,
 `tomi = "before TOMI"` satisfies both published MD5-prefix hints (`1d` and
