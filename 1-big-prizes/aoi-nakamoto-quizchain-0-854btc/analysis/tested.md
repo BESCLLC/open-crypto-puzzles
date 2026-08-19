@@ -449,3 +449,48 @@ because this was block 2") for the Real Big Block specifically.
 
 `tools/chapter_sweep.py` was rerun with CR LF CR LF and index 0 across the full
 rule and every 1, 2 and 3 paragraph marked set. [result pending]
+
+## The chapter read in full, and the marking model narrowed (2026-08-19)
+
+The chapter was fetched at full length and read. It documents its own mechanism,
+and that reading eliminates the marking rule the whole search had assumed.
+
+Paragraph 240, in the author's own words: "the FF and WW has meaning as well, as
+a dedication message. WW obviously is UUUU or 'four U, for you'. I leave it as an
+exercise for the reader to figure out who FF is." The FFWW paragraph groups --
+at 4-7, 92-95, 167-170, each spelling stnm in their final letters -- are a
+planted dedication, not the solution signs. That is why every FFWW-subset sweep
+failed: they are a decoy.
+
+The letter rule that solved Block 77 Stage One does not transfer either. On the
+Finney post, the paragraphs whose initial is not in I,T,A,S,M number exactly 4
+and their last letters spell STNM. On the chapter, that same rule marks 119
+paragraphs whose last letters spell garbage (stnmnm?dsrsgerhmm...), and no
+keep-set of initials isolates a 3-to-8 paragraph set with a clean signature.
+
+So the marked paragraphs are chosen by meaning, not by any letter or position
+rule. That was tested directly: every 2-to-5 paragraph subset of the 20
+paragraphs that actually make the identity claim or are named as the code
+source (5, 167, 188, 193, 198, 199, 210, 227, 229, 230, 231, 232, 234, 235, 236,
+238, 244, 245, 265, 272), in both the flip and the last-letter-only operation,
+both separators, indices 0-9 -- 21,679 subsets, 0 match.
+
+| Model | Coverage | Result |
+|---|---|---|
+| Whole-paragraph flip, FFWW groups | every subset of the 16 | 0 (decoy, per para 240) |
+| Whole-paragraph flip, full ITASM | 119 paragraphs | 0 (finals are garbage) |
+| Whole-paragraph flip/last, 1-3 paragraphs anywhere | exhaustive | 0 |
+| Whole-paragraph flip/last, 2-5 of the 20 identity paragraphs | 21,679 sets | 0 |
+| Whole-paragraph flip/last, every 4 paragraphs anywhere | 216,540,318 x 2 modes x 2 seps | in progress |
+
+What the negatives point at: her Block 2 worked example changes individual
+letters mid-paragraph -- "I" to "i" and "capitalization" to "capitalizatioN".
+That last change capitalises the final letter of a word in the middle of a
+paragraph, not a paragraph boundary. If the Real Big Block's "change only a
+couple of letters" is the same kind of per-letter edit at positions the prose
+points to, no paragraph-level sweep can reach it, and the exhaustive k=4 run is
+the last test of the paragraph model before that conclusion is forced.
+
+What would break it open: the exact winning string of any block this author
+solved in the same era -- Block 77 Stage One, or Quizchain2 Block 76, which was
+solved and swept 2026-08-17. A single worked per-letter example fixes the model.
