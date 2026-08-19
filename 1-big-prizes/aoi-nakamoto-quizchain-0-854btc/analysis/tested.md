@@ -494,3 +494,29 @@ the last test of the paragraph model before that conclusion is forced.
 What would break it open: the exact winning string of any block this author
 solved in the same era -- Block 77 Stage One, or Quizchain2 Block 76, which was
 solved and swept 2026-08-17. A single worked per-letter example fixes the model.
+
+## Per-letter model confirmed, paragraph model exhausted (2026-08-19)
+
+Her own documentation settles the operation. Complete Quizchain, block 29:
+"just change the o and i in 'voice' in the second sentence to 'O' and 'I', same
+method as in Block 2. Only two letters changed." Block 2 first round: "One of
+the letters in the family name of the author is changed from lower to upper
+case. Change the other letters in his name in the same way." The solution
+capitalises a few specific letters inside words -- not paragraph boundaries.
+
+That retires the whole-paragraph model, which is now exhausted anyway:
+
+| Search | Coverage | Result |
+|---|---|---|
+| Per-letter: capitalize each name occurrence, and each signature (STNM, SATOSHI, NAKAMOTO, ...) as an in-order subsequence within paragraph/sentence/whole | ~27,000 | 0 |
+| Contiguous slice of the chapter + plain/ITASM/FFWW flip, every range, both separators, indices 0-9 | 36,856 ranges | 0 |
+| Every 4-paragraph flip/last set, both separators (k=4 backstop) | 216M x 4 | in progress |
+
+The block-77 material in the Wattpad "Complete" chapters is all first-run
+(the genesis address: "eight items in two sets of four, 44 read from left and
+from right"). The live second-run Stage Two is marked "stay tuned" -- its
+specific letter pointer is not in the story. It is in the Reddit threads:
+Stage One (`ca6jxv`, solved) whose winning comment shows the exact per-letter
+operation on a bounded text, and the discussion thread (`chn8un`). Both are the
+gating information; brute force cannot substitute for them, since the marked
+letters are 2-to-4 positions among ~37,000 with no filter.
