@@ -72,3 +72,44 @@ she does not know them). Remaining exhaustive step for a GPU: 2-letter
 capitalizations of the edited chapter under CRLFCRLF at index 0, direct and via
 the 2-hop chain, with the "7th key has three 7s" cross-check as a secondary
 witness.
+
+## Status and resolve (2026-08-20)
+
+The pursuit is active and continuing — the goal is control of `14zMkTga...`, and
+this is treated as solvable (the author: "it should be possible to solve").
+
+What is now fully pinned for the Real Big Block (second-run, 777 mbtc):
+- Preimage: the "Second" Wattpad chapter, byte-exact (nbsp = `\xa0\x20`), with a
+  distinct edited live variant recorded above.
+- Separator: CRLF CRLF (13 10 13 10). Operation: capitalize a couple of specific
+  mid-word letters (block-29 style), whole text otherwise unchanged.
+- Derivation: MD5 -> BIP39 128-bit -> BIP44 m/44'/0'/0'/0/0, index 0, DIRECT.
+  Confirmed by the author's "End Phase" post: for the second run "the chain
+  aspect is gone, there are no links to previous blocks" — so no appended link
+  and no inter-block chaining. (The 2-hop self-chain is a separate
+  password-manager block, not this one.)
+
+The single remaining unknown: WHICH mid-word letters. That pointer was never
+published (puzzleponky solved stage 1, wrote "tricky bits", never revealed it;
+the author says she does not know them). It is not in any word list (author's
+own statement), so dictionary attacks are out.
+
+Search reality from this environment: WebSearch works; WebFetch and curl are
+egress-blocked. The Finney "Lois Lane / what does the S stand for" post the
+chapter alludes to is not indexed anywhere and is phrased speculatively in the
+chapter ("might that have been Hal Finney?") — treat it as rhetorical, not a
+retrievable pointer.
+
+Two live unlocks, both requiring a machine with open outbound HTTPS:
+1. The 2019-07-08 r/Grycoin block, which names the one previous block sharing
+   this format (a fully-solved sibling whose exact [solution] serialization can
+   then be measured and mapped).
+2. The full solved-block corpus, if the "combination of blocks" reading is right.
+
+On compute: the decisive search is 2-letter (and, as a backstop, 3-letter)
+capitalizations of the chapter at index 0, direct. That is a finite classical
+GPU job (k=2 ~= 6e8 candidates, hours on a GPU BIP39 kernel), NOT a problem
+quantum hardware helps with in practice — the crypto is not the barrier, the
+unfiltered position search is, and Grover offers only a square-root speedup on a
+machine that does not exist at this scale. The lever is the pointer (doc pull)
+or a GPU k=2/k=3 sweep, not a new class of hardware.
