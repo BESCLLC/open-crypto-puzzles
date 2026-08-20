@@ -630,3 +630,111 @@ reproduce Stage One's escrow under any of 108 serializations (3 keep-sets x 3
 case rules x 3 quote styles x 4 separators, indices 0-9, 1,080 addresses). The
 derivation is certified, so the difference is in the bytes. Fetch that post,
 never transcribe it; the same caution applies to any source used here.
+
+## Stage One's solution hash, and four certified negatives (2026-08-20)
+
+### A free filter on Stage One nobody had recorded
+
+In the Block 77 Stage One thread, the winning solver posted, on solving it:
+
+> Okay. I think solving 77 deserves a celebration of sorts. Here you are:
+> 9dd (copypasted).
+
+That is the first three digits of the MD5 of Stage One's winning solution, in
+the same form the author uses for every other block. It is a free 12-bit filter
+on a *solved* lot whose carrier text (Hal Finney's "Bitcoin and me", bitcointalk
+topic 155054) is public, and it was not recorded here before. Anyone holding a
+fetched copy of that post can now check a candidate serialization for `9dd`
+before deriving a single key, which is 4,096 candidates rejected per MD5.
+
+The author's own Hint 2 in that thread also settles a wording question: she
+writes "Satoshi's true identity" there, matching Hal. The chapter's "Satoshi's
+real identity" (paragraph 242) is therefore a later drift in her own prose, not
+a reading she carried from the start.
+
+### The separator, settled by measurement rather than by her description
+
+A player told her he was not on Windows, so his copy of the Block 2 question
+gave him LF line breaks, and asked for the hash of the unmodified text so he
+could check his transcription. She answered with `7759227`, and separately told
+him "copy paste and do not change anything with the line breaks". Testing every
+separator against that published anchor:
+
+| Separator | MD5 of the unmodified Block 2 question |
+|---|---|
+| LF LF `\n\n` | `7759227d7406d8230d7e3a8f7b9846d7` **matches** |
+| CRLF CRLF `\r\n\r\n` | `e997007971f6f17c8775d83f30edb4c6` |
+| CRLF `\r\n` | `fc3c7a6634dcb02eb33e341b47ef1a83` |
+| LF `\n` | `7d6f7387fedec29ebbfea54045cf0820` |
+
+LF LF, at 28 bits. Her post says she typed "13 10 13 10"; her tool hashed
+`\n\n`. Her account of her own byte format is wrong, so no reading of which
+sentence is "controlling" can settle a byte question -- only a published hash
+can, and there is exactly one.
+
+### The chapter, verified independently
+
+The Wattpad chapter was reconstructed from its HTML and checked three ways: 273
+paragraphs, the paragraph-initial and paragraph-final letter streams matching
+character for character, and 44,906 characters of prose + 272 LF LF separators
+= 45,450, the length recorded in fact 5. Paragraph 240's dedication statement
+was read in the author's own words, confirming the FFWW decoy from the source.
+
+### Derivation certified before any negative was recorded
+
+`derive.py`, a standalone implementation used for these sweeps, reproduces both
+legs of her published chain exactly: `2941774a2abec9f30c7d6777d1d53d91` at index
+1 gives `L5Z66qPmUkTAsWQywjRNHDxHrX6J1X1SQedp6V8QsbaXR7rGd6ex`, and
+`7b44cc11c866ab85b7078c43ad6795e1` at index 0 gives
+`KzFB7hBGmLBqm8nqVCVLBmgyd1NxnoJXZUhE377QL4T2iy5rw4Wz`, plus the BIP39 all-zero
+vector. The negatives below are measured, not asserted.
+
+### Block 2: the answer changes four or more letters
+
+| Search | Coverage | Result |
+|---|---|---|
+| Sentence-scoped flip, no inserted break | 32,768 subsets x 2 rules | 0 |
+| Every 1, 2 or 3 letter case change anywhere | 285,129,390 | 0 |
+
+The sentence-scoped model matters because it reproduces her worked example
+byte-perfectly -- marking paragraph 5's first sentence yields exactly
+`i expected otherwise...` and `...outing himselF` -- and it edits nothing but
+the marked span, where `block2_reverse.py`'s split grid inserts separator bytes
+and so never tested this model. Every subset of the 15 sentences fails.
+
+The 3-letter sweep is exhaustive over every triple of positions in the text,
+with no structural assumption at all: 69,424 candidates passed her `3c6` prefix
+against a chance expectation of 69,612 -- dead on chance, no excess anywhere --
+and none of the 347,120 derived addresses is the escrow. Combined with the
+earlier exhaustion of all 1 and 2 letter changes, **Block 2's answer changes at
+least 4 letters**. That is the first quantitative bound on her "change only a
+couple of letters".
+
+### Real Big Block: four more paragraph-selection models eliminated
+
+| Marked set | Coverage | Result |
+|---|---|---|
+| The 9 paragraphs whose last letter is already uppercase (188, 189, 193, 206, 210, 228, 236, 238, 258) | 512 subsets x 4 ops x 2 seps | 0 |
+| The 12 paragraphs containing "recognize the signs" (19, 41, 219, 221, 222, 224, 225, 229, 235, 243, 245, 272) | 4,096 subsets x 4 ops x 2 seps x idx 0-9 | 0 |
+| The 12 FFWW paragraphs (4-7, 92-95, 167-170) | 4,096 subsets x 4 ops x 2 seps x idx 0-9 | 0 |
+| The 5 malformed-capital words, every casing variant | 1,440 texts x idx 0-9 | 0 |
+
+The 9 uppercase-final paragraphs are the only ones in 273 where "force" and
+"toggle" differ, so that row closes the rule-variant question at paragraph
+granularity. The FFWW row now rests on a measurement here rather than on the
+private research it was quoted from.
+
+An inventory of every word in the chapter carrying a non-initial capital, with
+acronyms and her deliberate constructs removed, leaves exactly five: `VIrgin`
+(127), `BItcoin` (135), `ppM` (72), and two alphabet strings in paragraph 125
+each carrying a stray capital L. The Bitcoin-address example there,
+`3abcdefghijkLmnopqruvwxyz`, is also missing `s` and `t` where the Grycoin one
+`7abcdefghijkLmnopqrstuvwxyz` is complete -- worth noting in a chapter about the
+signature STNM, though restoring letters is a content change her rule forbids.
+
+### What is still open on Block 2
+
+Four or more changed letters, in combinations `words.py` cannot reach because it
+forces *both* edits of a marked word. The bounded next layer is every case
+change at up to 4 of the 296 word-boundary positions that carry a case effect:
+317,735,946 candidates, the same scale as the 3-letter run, filtered by `3c6`.
