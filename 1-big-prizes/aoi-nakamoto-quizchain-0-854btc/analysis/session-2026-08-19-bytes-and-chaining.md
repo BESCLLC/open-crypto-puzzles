@@ -113,3 +113,19 @@ quantum hardware helps with in practice — the crypto is not the barrier, the
 unfiltered position search is, and Grover offers only a square-root speedup on a
 machine that does not exist at this scale. The lever is the pointer (doc pull)
 or a GPU k=2/k=3 sweep, not a new class of hardware.
+
+## On-chain update (2026-08-20)
+
+- **Quizchain2 Block 76 (`13Cv6SXUnzGDT8JHqzzJ8xMPtsSdhJA4wd`, 0.077 BTC) was
+  SWEPT 2026-08-17** (0.07700000 BTC out to a bc1q... address, fee 190 sats),
+  one day after this repo's 2026-08-16 "funded" snapshot. It is no longer
+  claimable. An active solver cracked the filtered "change to" / "from change
+  to" riddle and took it — a capable competitor is working the series.
+- **Real Big Block stage 2 (`14zMkTgaVXJcxdh4JdWi29MLRR44iUSG9W`, 0.777 BTC)
+  remains funded and unspent as of 2026-08-20** (1 tx, received 2019-07-30,
+  0 sent; verified from blockchain.com). It is the last unclaimed lot of the
+  series and the sole remaining target.
+
+Implication: watch r/Grycoin for a Block-76 solution writeup (the author's
+convention is public disclosure) — it would pin her exact `[solution] TOMI
+[tomi]` wordplay idiom, directly informing the RBB.
