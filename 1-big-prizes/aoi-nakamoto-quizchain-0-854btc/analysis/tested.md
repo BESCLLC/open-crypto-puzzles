@@ -520,3 +520,113 @@ Stage One (`ca6jxv`, solved) whose winning comment shows the exact per-letter
 operation on a bounded text, and the discussion thread (`chn8un`). Both are the
 gating information; brute force cannot substitute for them, since the marked
 letters are 2-to-4 positions among ~37,000 with no filter.
+
+## The chapter pinned, the separator measured, four models eliminated (2026-08-20)
+
+The "Second" chapter was recovered in full as served markup and pinned before
+any candidate was tested. It parses to 273 paragraphs and 44,906 characters of
+prose; joined with LF LF that is 45,450 bytes, which is the part length the
+2026-08-18 metadata reports. Its first-letter and last-letter streams reproduce
+the ones recorded in that entry character for character. The chapter this entry
+tests is therefore the chapter, not a rendering of it.
+
+Paragraph 240 was read from those bytes and says what the 2026-08-19 entry
+reports, in her words: "And by the way, the FF and WW has meaning as well, as a
+dedication message. WW obviously is UUUU or 'four U, for you'. I leave it as an
+exercise for the reader to figure out who FF is." The three stnm runs sit at
+paragraphs 4-7, 92-95 and 167-170, and each is an FFWW group. A shuffle of the
+same last letters produces 0.07 such runs on average against the 3 observed, so
+they are planted; paragraph 240 says what they are planted as.
+
+### The separator, settled on her own published hash
+
+Block 2 is the only lot where she published the hash of an unmodified question
+text, and it decides the separator outright:
+
+| Separator | MD5 of the Block 2 question |
+|---|---|
+| LF LF (`\n\n`) | `7759227d7406d8230d7e3a8f7b9846d7` -- her announced 7759227 |
+| CRLF CRLF (`\r\n\r\n`) | `e997007971f6f17c8775d83f30edb4c6` |
+| CRLF (`\r\n`) | `fc3c7a6634dcb02eb33e341b47ef1a83` |
+| LF (`\n`) | `7d6f7387fedec29ebbfea54045cf0820` |
+
+Seven hex digits is 28 bits, so this is not a coincidence: what her tool hashed
+was LF LF, and her own description of typing "13 10 13 10" describes her
+keystrokes, not her bytes. No reading of which sentence of hers is controlling
+can override this, and the single-CRLF reading in particular is ruled out.
+
+### Derivation re-certified without bip_utils
+
+The sweeps below use a pure-python MD5-entropy to BIP39 to BIP44
+`m/44'/0'/0'/0/i` to P2PKH implementation, certified before use against both
+legs of her own published chain: `2941774a2abec9f30c7d6777d1d53d91` at index 1
+gives `L5Z66qPmUkTAsWQywjRNHDxHrX6J1X1SQedp6V8QsbaXR7rGd6ex`, and
+`7b44cc11c866ab85b7078c43ad6795e1` at index 0 gives
+`KzFB7hBGmLBqm8nqVCVLBmgyd1NxnoJXZUhE377QL4T2iy5rw4Wz`. A negative from an
+uncertified deriver is worthless; this one reproduces her numbers exactly.
+
+### Eliminated on the chapter
+
+Each set below is swept over every subset, in 4 operations (first-down-last-up,
+toggle, last-up only, last-down only), both separators, against both the live
+escrow and the superseded one.
+
+| Mark set | Why it was a candidate | Coverage | Result |
+|---|---|---|---|
+| The 9 paragraphs whose last letter is already uppercase: 188, 189, 193, 206, 210, 228, 236, 238, 258 | the only paragraphs in 273 where force and toggle differ, so the only ones carrying evidence of which rule she used | 512 subsets, 16,384 addresses | 0 |
+| The 12 paragraphs containing "recognize the signs": 19, 41, 219, 221, 222, 224, 225, 229, 235, 243, 245, 272 | the most literal reading of her Block 2 instruction, "for all the paragraphs where you recognize the signs" | 4,096 subsets, 327,680 addresses | 0 |
+| The 5 malformed-capitalization words: `VIrgin` (127), `BItcoin` (135), `ppM` (72), and the stray capital L in both alphabet strings (125) | "change only a couple of letters in their capitalization" plus "two and only two changes"; a proofreader notices these, a script does not | 1,440 texts, 14,400 addresses | 0 |
+
+The casing scan that produced the third row is exhaustive over the chapter: of
+every word carrying a non-initial capital, all others are acronyms (ALS, OPEC,
+PGP, RPOW, IBM, STNM, PETM, UTXO, CPU, HAL, THOMAS, TOM, GRY, BIT, AH, FF, WW,
+UUUU, II, III, NOT, ST) or her own deliberate constructs
+(`WorldWideAbsoluteCarbonBudget`, `AHScoin`, `BITcoin`, `oXXX`,
+`FUCKFuckFUCK...`). The five above are the complete set of malformed ordinary
+words.
+
+### The three planted instances are not the Finney shape
+
+Her three FFWW instances open the three major sections and are preceded, not
+interrupted, by their I paragraphs:
+
+    I. Second Life        3:I   4:F 5:F 6:W 7:W
+    II. Second Layer     91:I  92:F 93:F 94:W 95:W
+    III. Second Identity 164:I 165:I 166:I  167:F 168:F 169:W 170:W
+
+The post they imitate has the I *inside* the run. In the chapter's own
+quotation of it, paragraphs 230-234 read F F W I W, with "I was more positive."
+sitting between the two W paragraphs. So no instance reproduces the source
+shape, and the count of leading I paragraphs -- three for Second Identity
+against one each for Second Life and Second Layer -- is the only asymmetry
+separating the three.
+
+### Her alterations to the Finney post, audited
+
+Hal Finney's post was diffed against every place the chapter quotes it. The
+long block quotation at paragraphs 230-234 is verbatim with exactly one change,
+`facinating` to `fascinating`. Paragraph 221 quotes "Today, Satoshi's true
+identity has become a mystery" verbatim, keeping "true". Her looser quote at
+paragraph 216 carries four alterations: `correspond with both` to `correspond
+both with`, `create` to `make`, `proof of work` to `proof-of-work`, and a
+truncation.
+
+One alteration sits at a marked position. Having quoted "true identity"
+correctly at 221, paragraph 242 gives the *extraction* as `"Today, Satoshi's
+real identity"`, and 245 repeats "real identity" twice. Recorded because it is
+an author-created substitution at the step she labels "the first four words",
+and because the live block is called the Real Big Block. Weighted low: "real"
+appears 10 times in the chapter against 4 for "true", so it is her habitual
+word, and the phrase 245 is building is "Satoshi's real identity, recognize the
+signs". The FFWW groups are the standing warning here -- deliberate, planted,
+statistically impossible by chance, and documented by her as a decoy.
+
+### A transcription warning
+
+A copy of the Finney post taken from a rendered forum page reproduces the
+structure exactly -- 16 paragraphs, initials `IFFWIWTATSMATIAT`, the 4
+non-ITASM paragraphs at 1, 2, 3, 5 with last letters STNM -- but does not
+reproduce Stage One's escrow under any of 108 serializations (3 keep-sets x 3
+case rules x 3 quote styles x 4 separators, indices 0-9, 1,080 addresses). The
+derivation is certified, so the difference is in the bytes. Fetch that post,
+never transcribe it; the same caution applies to any source used here.
