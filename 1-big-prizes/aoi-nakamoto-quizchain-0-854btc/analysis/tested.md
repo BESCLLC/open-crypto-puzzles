@@ -919,3 +919,54 @@ combination of up to six word-boundary case changes reaches the escrow at index
 0 or 1. Block 2's answer therefore either changes a letter that is not at a word
 boundary, or marks paragraphs other than the FFWW four, or uses a derivation
 index above 1.
+
+## The chapter, certified character by character (2026-08-20)
+
+Wattpad's `data-p-id` attribute on each `<p>` element is the **MD5 of that
+paragraph's canonical text**. It is published in the page source, one per
+paragraph, and it converts the carrier from "probably right" to verified.
+
+The discovery came from the genesis-block chapter, which prints a solution
+string as its own paragraph:
+
+    <p data-p-id="4241d2d0e352e5090381c69e408ca80d">1A1zP1eP5QGefi2DMPTfTL5SLmv <b>7</b> DivfNa</p>
+
+and `md5("1A1zP1eP5QGefi2DMPTfTL5SLmv 7 DivfNa")` = `4241d2d0e352e509...`.
+
+Checked against all 273 ids of the Real Big Block chapter, this settles two
+serialization questions that no amount of reading could, and both had been
+answered wrongly here:
+
+| | Assumed | Measured |
+|---|---|---|
+| `<br>` inside a paragraph | one line feed | **no character at all** |
+| A run of two spaces | two spaces (0x20 0x20) | **NBSP + space (0xa0 0x20)** |
+
+Six paragraphs contain a `<br>` and five contain a doubled space, so eleven of
+the 273 paragraphs were wrong in every sweep this folder has ever run against
+the chapter, this session's included. The `<br>` error was invisible because no
+`<br>` sits at a paragraph edge, so the paragraph-initial and paragraph-final
+letter streams matched perfectly, and the 45,450-character figure recorded in
+fact 5 was itself computed under the same wrong assumption -- two
+independent-looking confirmations both inheriting one mistake.
+
+With `<br>` dropped and doubled spaces stored as NBSP + space:
+
+    272 of 273 paragraphs reproduce their published data-p-id exactly
+    chapter text: 44,896 characters, 6 NBSP
+
+The single exception is paragraph 77, `"What?"`, whose text is identical to
+paragraph 33; Wattpad assigns distinct ids to duplicate paragraphs, so this is
+an id-uniqueness artifact, not a content difference. **Every character of the
+carrier is now confirmed against the platform's own hashes.**
+
+Any future work on this block should start from that check. It costs one MD5 per
+paragraph and it is the only way to know the bytes are right; the letter streams
+and the total length both pass while the text is still wrong.
+
+### Re-run on the certified carrier
+
+The certified Stage One rule applied directly, all keep-sets, both separators,
+indices 0-9, plus the unmodified chapter: no candidate reaches either escrow.
+The signature searches of the previous section are being re-run against the
+corrected bytes, since their earlier negatives were computed on the wrong text.
