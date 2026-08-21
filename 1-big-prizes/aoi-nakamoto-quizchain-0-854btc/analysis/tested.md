@@ -809,3 +809,73 @@ about the extra `I` that distinguishes "Satoshi" from "THOMAS". Being invisible
 in rendered text it cannot be a hash-affecting edit, only a pointer. The edit it
 points at was tested: capitalising it to `SatoshI`, in every combination with the
 five malformed-capital words, 1,536 texts x 10 indices, 0 reach either escrow.
+
+## Block 77 Stage One, reproduced end to end (2026-08-20)
+
+Stage One is solved, and its exact serialization is now measured rather than
+described. The missing byte was invisible in every rendered copy of Hal Finney's
+post: bitcointalk's stored markup joins the post's trailer to the final
+paragraph with a **single** `<br />`, not the double that separates paragraphs.
+
+    <p>...I'm comfortable with my legacy.<br />[edited slightly]</p>
+
+So the last paragraph is `That's my story. ... I'm comfortable with my
+legacy.\n[edited slightly]` -- one line feed, inside the paragraph. Every
+transcription from the rendered page either drops the trailer or promotes it to
+a paragraph of its own, and both are wrong.
+
+With that one character in place:
+
+| | |
+|---|---|
+| Source | Hal Finney, "Bitcoin and me", bitcointalk topic 155054, 16 paragraphs |
+| Trailer | `[edited slightly]` joined to paragraph 16 by a single LF |
+| Keep-set | I, T, A, S, M (the letters of "Satoshi Nakamoto" pick the same 4 here) |
+| Marked | paragraphs 1, 2, 3, 5 (0-based) -- initials F, F, W, W -- finals spell **STNM** |
+| Rule | marked paragraph's first letter lowered, last letter raised |
+| Separator | LF LF |
+| MD5 | `9dd2efb9bc976c2095bd534d7b8d431c` |
+| Derivation index | 0 |
+| Address | `19TbyN5KCg1Lg7qHwezifsLVcdSa2Rj5KN` = the Stage One escrow |
+
+Two independent oracles agree: the escrow address, and the `9dd` the winning
+solver published in the Stage One thread ("Okay. I think solving 77 deserves a
+celebration of sorts. Here you are: 9dd (copypasted)."). The MD5 begins 9dd.
+
+This is the calibration the folder has been asserting from private research
+without a reproduction. It now has one, and every convention in it is measured:
+separator LF LF (again, against her own "13 10 13 10"), index 0, force rather
+than toggle (they coincide here), and the trailer's single line feed.
+
+### What it says about the Real Big Block
+
+Applying the identical rule to the 273-paragraph chapter does not reach either
+escrow at any keep-set:
+
+| Keep-set | Paragraphs marked | md5 | index 0 |
+|---|---|---|---|
+| ITASM | 118 | `7a167cc62420...` | `1JUq82YNEwiKZ1mEdhPgcQFQcwGFdShSjT` |
+| SATOSHI | 94 | `82dc13338ffe...` | `15kEcnyrY7giQSWqVpzz5vPxcG3qo5aF3F` |
+| SATOSHINAKAMOTO | 86 | `3bca3b6eb417...` | `1CMSBRMbofkXQpnsQbhjmKz9qn47UXXJke` |
+
+as expected: a keep-set cannot select a small set out of 273 paragraphs. But
+Stage One shows that the keep-set was never what made the marked set
+*recognisable* -- the **signature** was. The four marked paragraphs are the ones
+whose last letters spell STNM.
+
+That transfers without a scale problem, and it is a small search. Every
+increasing set of chapter paragraphs whose final letters spell a candidate
+signature:
+
+| Signature | Candidate paragraph sets |
+|---|---|
+| stnm | 79,021 |
+| nmst | 34,014 |
+| tomi | 392 |
+| ims | 254 |
+| tom | 126 |
+| hal, aoi, iam, second, thomas, finney, satoshi, nakamoto, satommi, grycoin, bitcoin | 0 (no such subsequence exists) |
+
+113,807 sets in total, each one MD5 and one derivation under the certified rule.
+`tools/sig.py` in the research scratch runs it; the result is recorded below when
+it lands.
