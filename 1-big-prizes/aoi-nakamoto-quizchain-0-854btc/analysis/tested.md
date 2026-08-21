@@ -970,3 +970,53 @@ The certified Stage One rule applied directly, all keep-sets, both separators,
 indices 0-9, plus the unmodified chapter: no candidate reaches either escrow.
 The signature searches of the previous section are being re-run against the
 corrected bytes, since their earlier negatives were computed on the wrong text.
+
+## Stage One's structure, transferred at Stage One's scale (2026-08-20)
+
+Her rule marks 4 of Hal's 16 paragraphs. It cannot mark a small set out of 273,
+which is why every keep-set fails on the whole chapter. But the chapter is not
+one flat text: 28 bold headings divide it, and several of its sections are
+Hal-post sized. Applying the keep-set inside each section gives, for each
+section, a marked set of the right order.
+
+One section reproduces Stage One's structure exactly:
+
+| Section | Paragraphs | Keep-set | Marked | Their last letters |
+|---|---|---|---|---|
+| **1. My Identity** | 10 | SATOSHI | **4** (167, 168, 169, 170) | **stnm** |
+| 3. Reverse Turing Test | 16 | SATOSHI | 4 (77, 80, 81, 86) | tntn |
+| 2. Bitcoin With Two Changes | 14 | SATOSHI | 4 (115, 119, 127, 128) | seln |
+| d) Outing himself as Satoshi | 31 | SATOSHI | 6 (225, 230-232, 234, 235) | estnmh |
+
+A ten-paragraph section, the literal letters of SATOSHI as the keep-set, four
+exceptions, and their final letters spelling the signature -- the same shape as
+the Finney post, in the section that makes the identity claim. It is the
+strongest structural echo the chapter contains.
+
+It does not reach either escrow. Nor does any of the others, nor the chapter's
+own verbatim quotation of Stage One's four marked paragraphs (230, 231, 232,
+234), nor any of the three FFWW groups, alone or together.
+
+### A carrier ambiguity this raised, and it is not settled
+
+`data-p-id` proves what Wattpad *stores*. What she hashed was a copy out of the
+*rendered* page, and a browser renders `<br>` as a line break. So there are two
+live carriers, not one:
+
+| | `<br>` | doubled space |
+|---|---|---|
+| Wattpad canonical (proven by the ids) | no character | NBSP + space |
+| Browser copy (what she describes doing) | line feed | NBSP + space, or two spaces |
+
+Four conventions in total. Everything in this section was run against all four,
+plus both separators and three case operations, and the per-section sweep also
+tried each section as a carrier in its own right, with and without its heading:
+
+| Sweep | Candidates | Addresses | Result |
+|---|---|---|---|
+| Named structural sets (My Identity, Outing, FFWW groups, quoted Stage One block, and combinations) | 240 | 2,400 | 0 |
+| Every section x 4 keep-sets x 4 carriers x 2 separators x 3 scopes | 1,488 | 8,928 | 0 |
+
+Anyone running the exhaustive search should carry all four carrier conventions,
+not one: `C(273,4)` x 4 conventions is 928 million derivations rather than 232
+million.
