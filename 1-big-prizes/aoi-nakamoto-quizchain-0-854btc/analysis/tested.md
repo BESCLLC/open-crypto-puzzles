@@ -1020,3 +1020,56 @@ tried each section as a carrier in its own right, with and without its heading:
 Anyone running the exhaustive search should carry all four carrier conventions,
 not one: `C(273,4)` x 4 conventions is 928 million derivations rather than 232
 million.
+
+## Second Life against Second, diffed by paragraph hash (2026-08-20)
+
+The standalone "Second Life" part and the Real Big Block chapter share a long
+passage, and because Wattpad publishes a `data-p-id` per paragraph the diff can
+be done at hash level rather than by eye. Of the 17 overlapping paragraphs, 13
+carry identical ids -- byte-identical text -- and 4 differ, plus one paragraph
+present only in the chapter:
+
+| Chapter | Second Life (earlier) | Chapter (later) |
+|---|---|---|
+| 14 | `"Still 21st Century".` | `"2020."` |
+| 15 | `...Not even one hundred years have passed.` | `...Not even ten years have passed.` |
+| 18 | `Third most popular name for Japanese girls right now."` | `A popular name for Japanese girls."` |
+| 19 | *absent* | `I recognize the signs.` **inserted** |
+| 24 | `...bore you with second rate quiz questions...` | `...third rate quiz questions...` |
+
+Every edit is certified: the quoted Second Life text reproduces its own
+published id exactly in all four cases, and the unchanged paragraphs match the
+chapter's ids exactly.
+
+`Still 21st Century` is the published solution of Grycoin chain Block 1 --
+`md5` = `4c414876be9043da...`, matching the `4c4` she announced. So the earlier
+version of this passage contained one of her own block answers verbatim, and she
+replaced it with `"2020."` when the passage was folded into the chapter. She also
+said of Block 1, "It is for 77, but you will not see it if you let a script solve
+the block", which is consistent: a script that finds the hash never asks why that
+phrase, and so never finds the version difference.
+
+The standalone part also gives a third independent confirmation of the `<br>`
+rule: its first paragraph is `<br>"Good morning, Tom."` and carries the same id
+as the chapter's plain `"Good morning, Tom."`. A leading `<br>` changes nothing.
+
+### What the edits are not
+
+The five changed paragraphs are not the marked set. Every subset of
+{14, 15, 18, 19, 24}, under all four carrier conventions, both separators and
+three case operations -- 744 candidates, 7,440 derived addresses -- reaches
+neither escrow. (This had been asserted earlier in discussion without being run;
+it is now measured.)
+
+Nor do the edit tokens themselves hash to any of her published prefixes. Every
+old-side and new-side phrase, every pair of them across six joiners, and the
+ordered concatenations of each side were checked against `d78c92f`, `f8e`, `1d`,
+`3c6` and `4c4`: the only match is `Still 21st Century` to `4c4`, already known.
+Ten candidates matched `1d`, which is 8 bits and expects nine by chance out of
+that many.
+
+What the edits do establish is provenance: the chapter is a revision of an
+earlier published text, she edited it deliberately in five places, and one of
+those places held a block answer she had already published. That is a strong
+pointer that the two documents are meant to be compared. It is not yet a
+selector.
