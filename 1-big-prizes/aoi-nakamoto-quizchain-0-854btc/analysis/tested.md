@@ -738,3 +738,74 @@ Four or more changed letters, in combinations `words.py` cannot reach because it
 forces *both* edits of a marked word. The bounded next layer is every case
 change at up to 4 of the 296 word-boundary positions that carry a case effect:
 317,735,946 candidates, the same scale as the 3-letter run, filtered by `3c6`.
+
+## A published plaintext hash, solved (2026-08-20)
+
+The genesis-block chapter closes its hint series with two 28-bit anchors for the
+first-run block 77:
+
+> After the above hints it should be fairly obvious what the cleartext items
+> are. But to celebrate the French national holiday [...] I now release partial
+> MD5 hashes for the plaintext items, just so everyone can make sure they got
+> that part right.
+>
+> For the two plaintext items read from the left, the first 7 digits are
+> cc9485a. For the two plaintext items read from the left, they are d78c92f.
+
+The second "from the left" is a slip for "from the right"; the chapter reads the
+address in both directions. The first anchor falls to a plain string:
+
+    "Hal Finney"  ->  cc9485a095f30ddc861118b8e7449e2d
+
+matching her published `cc9485a` at 28 bits. The counterpart `d78c92f` does not
+match `Nakamoto Satoshi`, `Satoshi Nakamoto`, `Nm ST`, `N7 S5`, or any of
+1,854,816 candidates built from every substring and reversed substring of the
+genesis address crossed with the name forms and six joiners.
+
+What the solved half is worth is calibration on the *shape* of her answers. The
+chapter's machinery around this address is enormous -- Atbash, two foldovers,
+Fibonacci, Roman numerals, the Voldemort anagram, HAL as IBM -- and the answer
+string it all produces is a person's name, ordinarily capitalized, with a single
+space. That matches every other solution of hers on record: `Still 21st Century`,
+`Thomas TOMI Harold Thomas Finney II`. Her narrative is elaborate; her answer
+strings are plain. A Stage Two hypothesis that requires an elaborate constructed
+string is out of character for the author, on her own published evidence.
+
+The same chapter list also settles the `true`/`real` question raised by paragraph
+242. Her Wattpad table of contents carries a chapter titled **"Satoshi's Real
+Identity", dated 2019-04-24** -- three months before the Real Big Block existed.
+"Satoshi's real identity" is her house phrase, not a pointer planted for this
+block.
+
+### Paragraph-initial recognition does not transfer to the chapter
+
+Sixteen candidate recognition keys were tested as paragraph-initial keep-sets
+over the 273-paragraph chapter, on the model that reproduces Stage One:
+
+| Key | Paragraphs marked | Finals |
+|---|---|---|
+| HAROLDTHOMASFINNEY | 56 | `nmm?dsrsmmtseents...` |
+| SATOSHI | 95 | `stnmnm?dsrsgerhmm...` |
+| AOINAKAMOTO | 117 | `dgstnmm?dsrsgehhm...` |
+| ITASM | 119 | `stnmnm?dsrsgerhmm...` |
+| THOMAS | 140 | `enstnmnnmsd?dsrss...` |
+| HALFINNEY | 147 | `dgnmm?dsrswhmlmts...` |
+| AOI | 175 | `dgstnmnm?dsrsgewh...` |
+| SECOND | 224 | `enstnmnmesd?dsrss...` |
+
+None yields a small marked set with a readable signature, and none can: a
+keep-set of k letters marks about (26-k)/26 of all paragraphs, which is 4 of 16
+on Hal's post and dozens to hundreds of 273 here. The mechanism is not
+scale-invariant, so no choice of name rescues it. What must be revised is the
+assumption that Stage Two recognises signs at paragraph initials at all.
+
+### The chapter's one markup anomaly
+
+A scan of all 273 paragraphs for irregular markup finds only `<br>` tags
+everywhere except one: paragraph 181, the heading `b) THOMAS and Satoshi`, whose
+final `i` sits in a bold tag of its own (`<b>b) THOMAS and Satosh</b><b>i</b>`).
+It is the only split-tag paragraph in the document, and it falls on the heading
+about the extra `I` that distinguishes "Satoshi" from "THOMAS". Being invisible
+in rendered text it cannot be a hash-affecting edit, only a pointer. The edit it
+points at was tested: capitalising it to `SatoshI`, in every combination with the
+five malformed-capital words, 1,536 texts x 10 indices, 0 reach either escrow.
