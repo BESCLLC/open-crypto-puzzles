@@ -879,3 +879,43 @@ signature:
 113,807 sets in total, each one MD5 and one derivation under the certified rule.
 `tools/sig.py` in the research scratch runs it; the result is recorded below when
 it lands.
+
+## The signature model, closed on both streams (2026-08-20)
+
+Stage One's marked set is recognisable by its **signature**, not by its keep-set:
+the four marked paragraphs are the ones whose last letters spell STNM. That
+transfers to the chapter without a scale problem, and it is a small search.
+Every increasing set of chapter paragraphs whose letters spell a candidate
+signature was enumerated and run through the certified Stage One rule (first
+letter lowered, last raised, LF LF, both escrows):
+
+| Stream | Signatures with any subsequence | Sets | Result |
+|---|---|---|---|
+| Paragraph finals | stnm 79,021; nmst 34,014; tomi 392; ims 254; tom 126 | 113,807 | 0 |
+| Paragraph initials | stnm 46; nmst 685; tom 367; ims 348; iam 969; aoi 3,045; tomi 3,998; ffww 3,462; nakamoto 8,120; thomas 9,945; satommi 15,840 | 46,825 | 0 |
+
+160,632 paragraph sets, 0 reaching either escrow. The finals row is exhaustive in
+a strong sense: `hal`, `aoi`, `iam`, `second`, `thomas`, `finney`, `satoshi`,
+`nakamoto`, `halfinney`, `satommi`, `grycoin` and `bitcoin` have **zero**
+subsequences in the chapter's final letters, so no paragraph set can spell them
+there at all. Every signature the chapter's finals can physically support has
+been tested.
+
+## Block 2 inside the FFWW paragraphs, exhausted to six changes (2026-08-20)
+
+Her selector marks Block 2's paragraphs {2,3,6,7} (initials F F W W, from the
+literal letters of SATOSHI), and her rule keeps everything outside the marked
+paragraphs unchanged, so every changed letter must lie inside those four. They
+contain 96 word-boundary positions carrying a case effect. Every subset up to
+size 6 -- 991,641,864 candidates -- was swept under her free 3c6 prefix:
+
+| Half | Texts | Past 3c6 | Addresses derived (idx 0-1) | Result |
+|---|---|---|---|---|
+| anchors 0-7 | 408,089,334 | 100,003 | 200,006 | 0 |
+| anchors 8-95 | 583,552,530 | 142,974 | 285,948 | 0 |
+
+Prefix hits land at chance in both halves. So within the FFWW paragraphs, no
+combination of up to six word-boundary case changes reaches the escrow at index
+0 or 1. Block 2's answer therefore either changes a letter that is not at a word
+boundary, or marks paragraphs other than the FFWW four, or uses a derivation
+index above 1.
