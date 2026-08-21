@@ -1073,3 +1073,43 @@ earlier published text, she edited it deliberately in five places, and one of
 those places held a block answer she had already published. That is a strong
 pointer that the two documents are meant to be compared. It is not yet a
 selector.
+
+## The second-letter reading, and what it does and does not explain (2026-08-20)
+
+Of the chapter's malformed ordinary-word capitals, two share a construction the
+third does not:
+
+    V I rgin      anomalous capital at the SECOND letter, and it is I
+    B I tcoin     anomalous capital at the SECOND letter, and it is I
+    p p M         anomalous capital at the THIRD letter
+
+Both second-letter cases sit inside part II, "Second Layer", and both fall after
+the passage that says Grycoin is built "with two and only two changes", in a
+section titled "2. Bitcoin With Two Changes" whose text then separates "One
+change is that..." from "The other change is replay protection". Two changes,
+announced twice, followed by exactly two conspicuous capitalization violations,
+each at a second letter, each an I -- which is also the Roman numeral of the
+part they sit in.
+
+Read as an edit, this is dead: every casing variant of those two words, alone
+and in combination with the other anomalies, was tested earlier (15,360
+addresses, 0). Read as a *demonstration of an operation*, it survives that, and
+it is the first clue in this folder that names an operation rather than a
+position.
+
+Tested as an operation:
+
+| Marked set | Operation | Candidates | Addresses | Result |
+|---|---|---|---|---|
+| FFWW groups, My Identity, the quoted Stage One block, the Second Life edits, the two anomaly paragraphs, the whole Grycoin section, part II entire, all 273 | 2nd letter up; 1st down + 2nd up; 2nd letter toggled | 248 | 1,488 | 0 |
+| Every word's second letter capitalized, whole chapter | global | 8 | 48 | 0 |
+| Signature subsequence sets (stnm, nmst, tom, ims, ii in initials; tomi, ims, tom, ii in finals) | 2nd up; 1st down + 2nd up | 26,472 | 52,944 | 0 |
+
+All across both `<br>` conventions and both separators.
+
+So the second-letter operation is eliminated on every mark set this folder has
+reason to prefer. What it leaves standing is the observation itself: if she
+demonstrates an operation twice, in the part whose own numeral is II, right
+after saying "two and only two changes", the demonstration is probably about
+*something*. The unresolved question is what object the operation applies to,
+and that is not the chapter's paragraphs under any selector tried here.
