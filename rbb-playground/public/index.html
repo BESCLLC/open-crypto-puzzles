@@ -2,79 +2,102 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0f1220" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='26'%3E%F0%9F%94%91%3C/text%3E%3C/svg%3E" />
 <title>RBB Hash Playground</title>
 <style>
-  :root{--bg:#0f1220;--panel:#171a2b;--panel2:#1e2237;--fg:#e7e9f3;--mut:#9aa0b8;--acc:#6ea8fe;--ok:#39d98a;--bad:#ff6b6b;--gold:#ffcf5c;--bd:#2a2f4a}
+  :root{--bg:#0f1220;--panel:#171a2b;--fg:#e7e9f3;--mut:#9aa0b8;--acc:#6ea8fe;--ok:#39d98a;--bad:#ff6b6b;--gold:#ffcf5c;--bd:#2a2f4a}
   *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
-  header{padding:14px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-  h1{font-size:16px;margin:0;letter-spacing:.5px}
+  html,body{overflow-x:hidden}
+  body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;-webkit-text-size-adjust:100%}
+  header{padding:12px 16px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  h1{font-size:15px;margin:0;letter-spacing:.5px}
   .badge{padding:3px 9px;border-radius:20px;font-size:12px;border:1px solid var(--bd)}
   .badge.ok{color:var(--ok);border-color:#2b6b4d}.badge.bad{color:var(--bad);border-color:#6b2b2b}
-  main{max-width:1100px;margin:0 auto;padding:20px;display:grid;gap:18px}
-  .card{background:var(--panel);border:1px solid var(--bd);border-radius:12px;padding:16px}
+  .sub{color:var(--mut);font-size:11.5px;flex-basis:100%}
+  main{max-width:1050px;margin:0 auto;padding:16px;display:grid;gap:16px}
+  .card{background:var(--panel);border:1px solid var(--bd);border-radius:12px;padding:14px}
   label{color:var(--mut);font-size:12px;display:block;margin:0 0 6px}
-  textarea{width:100%;min-height:230px;background:#0c0f1c;color:var(--fg);border:1px solid var(--bd);border-radius:8px;padding:12px;font:13px/1.5 ui-monospace,monospace;resize:vertical}
-  .row{display:flex;gap:14px;flex-wrap:wrap;align-items:end;margin-top:12px}
-  select,input[type=number],input[type=text]{background:#0c0f1c;color:var(--fg);border:1px solid var(--bd);border-radius:8px;padding:8px 10px;font:13px ui-monospace,monospace}
-  button{background:var(--acc);color:#08101f;border:0;border-radius:8px;padding:10px 18px;font-weight:700;cursor:pointer;font-family:inherit}
+  /* 16px form controls prevents iOS zoom-on-focus */
+  textarea,select,input{font-size:16px;background:#0c0f1c;color:var(--fg);border:1px solid var(--bd);border-radius:8px}
+  textarea{width:100%;min-height:220px;padding:12px;font-family:ui-monospace,monospace;line-height:1.5;resize:vertical}
+  textarea:focus,select:focus,input:focus{outline:2px solid var(--acc);outline-offset:0}
+  .row{display:flex;gap:12px;flex-wrap:wrap;align-items:end;margin-top:12px}
+  .row>div{flex:1 1 160px;min-width:0}
+  select,input[type=number],input[type=text]{padding:10px;width:100%}
+  button{background:var(--acc);color:#08101f;border:0;border-radius:8px;padding:12px 18px;font-weight:700;cursor:pointer;font-family:inherit;font-size:15px;min-height:44px;flex:1 1 auto}
   button.ghost{background:transparent;color:var(--acc);border:1px solid var(--acc)}
   button:active{transform:translateY(1px)}
-  .mono{font-family:ui-monospace,monospace}
-  .kv{display:grid;grid-template-columns:130px 1fr;gap:6px 12px;margin-top:8px}
+  .mono{font-family:ui-monospace,monospace;overflow-wrap:anywhere;word-break:break-all}
+  .kv{display:grid;grid-template-columns:120px 1fr;gap:6px 12px;margin-top:6px}
   .kv b{color:var(--mut);font-weight:400}
-  table{width:100%;border-collapse:collapse;margin-top:10px;font-size:12.5px}
-  th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--bd);white-space:nowrap}
-  th{color:var(--mut);font-weight:600}
-  td.addr{font-size:12px}
-  .hit{background:linear-gradient(90deg,#123a24,#0f1220);border:1px solid #2b6b4d}
-  .banner{display:none;margin-top:12px;padding:14px;border-radius:10px;font-weight:700}
-  .banner.win{display:block;background:#123a24;border:1px solid var(--ok);color:var(--ok)}
+  .kv span{overflow-wrap:anywhere;word-break:break-all}
+  /* address result cards (responsive; no horizontal overflow) */
+  .acard{border:1px solid var(--bd);border-radius:10px;padding:10px 12px;margin-top:10px;display:grid;gap:4px}
+  .acard.hit{background:linear-gradient(90deg,#123a24,#0f1220);border-color:#2b6b4d}
+  .acard .top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .idx{background:#0c0f1c;border:1px solid var(--bd);border-radius:6px;padding:1px 8px;font-size:12px;color:var(--mut)}
+  .a{font-size:14px;overflow-wrap:anywhere;word-break:break-all}
+  .w{font-size:12px;color:var(--mut);overflow-wrap:anywhere;word-break:break-all}
   .tgt{color:var(--gold);font-size:11px}
+  .cp{cursor:pointer;color:var(--acc);border:1px solid var(--bd);background:#0c0f1c;font-size:12px;padding:5px 10px;border-radius:6px;min-height:34px;flex:0 0 auto}
+  .cprow{display:flex;gap:8px;flex-wrap:wrap;margin-top:2px}
+  .banner{display:none;margin-top:12px;padding:14px;border-radius:10px;font-weight:700;overflow-wrap:anywhere}
+  .banner.show{display:block}
   .muted{color:var(--mut)}
-  .cp{cursor:pointer;color:var(--acc);border:0;background:none;font-size:11px;padding:0 4px}
-  details summary{cursor:pointer;color:var(--acc)}
-  .scroll{max-height:340px;overflow:auto}
-  .warn{color:var(--gold);font-size:12px}
+  details summary{cursor:pointer;color:var(--acc);padding:4px 0}
+  .tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-top:8px;max-height:360px;overflow-y:auto}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--bd);white-space:nowrap}
+  th{color:var(--mut);font-weight:600;position:sticky;top:0;background:var(--panel)}
+  td.pre{white-space:normal;min-width:180px;color:var(--mut)}
+  .warn{color:var(--gold);font-size:12px;overflow-wrap:anywhere}
+  @media (max-width:560px){
+    main{padding:12px;gap:12px}.card{padding:12px}
+    .kv{grid-template-columns:1fr;gap:2px 0}.kv b{margin-top:6px}
+    button{flex:1 1 100%}
+  }
 </style>
 </head>
 <body>
 <header>
   <h1>RBB HASH PLAYGROUND</h1>
-  <span id="st" class="badge">checking derivation…</span>
-  <span class="muted" style="margin-left:auto;font-size:12px">MD5 → BIP39 → BIP44 m/44'/0'/0'/0/i → P2PKH</span>
+  <span id="st" class="badge">checking…</span>
+  <span class="sub">MD5 → BIP39 → BIP44 m/44'/0'/0'/0/i → P2PKH</span>
 </header>
 
 <main>
   <div class="card">
     <label>Paste the carrier text (paragraphs separated by a blank line). Change capitalization in place, then Compute.</label>
-    <textarea id="text" spellcheck="false" placeholder="Paste paragraphs here…"></textarea>
+    <textarea id="text" spellcheck="false" autocapitalize="off" autocorrect="off" autocomplete="off" placeholder="Paste paragraphs here…"></textarea>
     <div class="row">
       <div>
         <label>Assembly mode</label>
         <select id="mode">
-          <option value="paragraphs">split on blank lines, rejoin with separator</option>
+          <option value="paragraphs">split on blank lines → rejoin</option>
           <option value="raw">hash exactly what I pasted</option>
         </select>
       </div>
       <div>
         <label>Paragraph separator</label>
         <select id="sep">
-          <option value="CRLFCRLF">CRLF CRLF  (\r\n\r\n — live escrow)</option>
-          <option value="LFLF">LF LF  (\n\n — Stage One)</option>
-          <option value="LF">LF  (\n)</option>
-          <option value="CRLF">CRLF  (\r\n)</option>
+          <option value="CRLFCRLF">CRLF CRLF (live escrow)</option>
+          <option value="LFLF">LF LF (Stage One)</option>
+          <option value="LF">LF</option>
+          <option value="CRLF">CRLF</option>
           <option value="SPACE">single space</option>
           <option value="NONE">none</option>
         </select>
       </div>
-      <div>
-        <label>Addresses (idx 0…N)</label>
-        <input id="n" type="number" min="1" max="50" value="8" style="width:80px" />
+      <div style="flex:0 1 110px">
+        <label>Addresses N</label>
+        <input id="n" type="number" min="1" max="50" value="8" inputmode="numeric" />
       </div>
+    </div>
+    <div class="row">
       <button id="go">Compute</button>
-      <button id="load" class="ghost" title="load the certified Stage One carrier as a starting example">Load Stage-1 example</button>
+      <button id="load" class="ghost">Load Stage-1 example</button>
     </div>
     <div id="banner" class="banner"></div>
   </div>
@@ -82,16 +105,16 @@
   <div class="card" id="out" style="display:none">
     <div class="kv">
       <b>bytes</b><span id="bytes" class="mono"></span>
-      <b>MD5 (entropy)</b><span id="md5" class="mono"></span>
-      <b>mnemonic</b><span id="mn" class="mono" style="font-size:12px"></span>
+      <b>MD5</b><span id="md5" class="mono"></span>
+      <b>mnemonic</b><span id="mn" class="mono" style="font-size:13px"></span>
     </div>
-    <table id="addrs"><thead><tr><th>idx</th><th>address</th><th>WIF (private key)</th><th></th></tr></thead><tbody></tbody></table>
+    <div id="addrs"></div>
   </div>
 
   <div class="card">
     <details>
-      <summary>Per-paragraph MD5 (compare with Wattpad <span class="mono">data-p-id</span>)</summary>
-      <div class="scroll"><table id="pp"><thead><tr><th>#</th><th>md5</th><th>first</th><th>last</th><th>len</th><th>preview</th></tr></thead><tbody></tbody></table></div>
+      <summary>Per-paragraph MD5 (compare with Wattpad data-p-id)</summary>
+      <div class="tablewrap"><table id="pp"><thead><tr><th>#</th><th>md5</th><th>1st</th><th>last</th><th>len</th><th>preview</th></tr></thead><tbody></tbody></table></div>
     </details>
   </div>
 
@@ -99,10 +122,10 @@
     <details>
       <summary>Derive straight from an MD5 / entropy (32 hex)</summary>
       <div class="row">
-        <input id="ehex" type="text" placeholder="9dd2efb9bc976c2095bd534d7b8d431c" style="flex:1;min-width:280px" />
-        <button id="ego" class="ghost">Derive</button>
+        <div style="flex:1 1 100%"><input id="ehex" type="text" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" placeholder="9dd2efb9bc976c2095bd534d7b8d431c" /></div>
       </div>
-      <table id="eaddrs"><thead><tr><th>idx</th><th>address</th><th>WIF</th><th></th></tr></thead><tbody></tbody></table>
+      <div class="row"><button id="ego" class="ghost">Derive</button></div>
+      <div id="eaddrs"></div>
     </details>
     <p class="warn">⚠ Private keys are shown so you can sweep a hit yourself. Keep this instance private; anyone who reaches the URL sees whatever you compute.</p>
   </div>
@@ -110,57 +133,61 @@
 
 <script>
 const $ = (s)=>document.querySelector(s);
-const TARGET_LIVE = "14zMkTgaVXJcxdh4JdWi29MLRR44iUSG9W";
 async function post(url, body){ const r = await fetch(url,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(body)}); return r.json(); }
-function cp(t){ navigator.clipboard.writeText(t); }
-function addrRows(tbody, rows){
-  tbody.innerHTML="";
+async function cp(t,btn){
+  try{ await navigator.clipboard.writeText(t); }
+  catch(e){ const ta=document.createElement("textarea"); ta.value=t; ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.select(); try{document.execCommand("copy");}catch(_){} ta.remove(); }
+  if(btn){ const o=btn.textContent; btn.textContent="copied ✓"; setTimeout(()=>btn.textContent=o,900); }
+}
+function renderAddrs(container, rows){
+  container.innerHTML="";
   for(const r of rows){
-    const tr=document.createElement("tr");
-    if(r.target) tr.className="hit";
-    tr.innerHTML=`<td>${r.index}</td>
-      <td class="addr">${r.address} ${r.target?`<span class="tgt">◄ ${r.target}</span>`:""}</td>
-      <td class="mono" style="font-size:11px">${r.wif}</td>
-      <td><button class="cp" data-c="${r.address}">copy addr</button><button class="cp" data-c="${r.wif}">copy key</button></td>`;
-    tbody.appendChild(tr);
+    const d=document.createElement("div"); d.className="acard"+(r.target?" hit":"");
+    d.innerHTML=`<div class="top"><span class="idx">idx ${r.index}</span>${r.target?`<span class="tgt">◄ ${r.target}</span>`:""}</div>
+      <div class="a mono">${r.address}</div>
+      <div class="w mono">${r.wif}</div>
+      <div class="cprow"><button class="cp" data-c="${r.address}">copy address</button><button class="cp" data-c="${r.wif}">copy key</button></div>`;
+    container.appendChild(d);
   }
-  tbody.querySelectorAll(".cp").forEach(b=>b.onclick=()=>cp(b.dataset.c));
+  container.querySelectorAll(".cp").forEach(b=>b.onclick=()=>cp(b.dataset.c,b));
+}
+function banner(kind,msg){
+  const b=$("#banner");
+  if(!msg){ b.className="banner"; b.textContent=""; return; }
+  b.className="banner show"; b.textContent=msg;
+  if(kind==="win"){ b.style.background="#123a24"; b.style.color="var(--ok)"; b.style.border="1px solid var(--ok)"; }
+  else { b.style.background="#3a1212"; b.style.color="#ff9b9b"; b.style.border="1px solid #6b2b2b"; }
 }
 async function compute(){
+  banner();
   const res = await post("/api/hash",{text:$("#text").value,sepKey:$("#sep").value,indices:+$("#n").value,mode:$("#mode").value});
-  const b=$("#banner");
-  if(!res.ok){ b.className="banner win"; b.style.background="#3a1212"; b.style.color="#ff9b9b"; b.style.borderColor="#6b2b2b"; b.textContent="Error: "+res.error; return; }
+  if(!res.ok){ banner("err","Error: "+res.error); return; }
   $("#out").style.display="block";
   $("#bytes").textContent=res.bytes;
   $("#md5").textContent=res.md5;
   $("#mn").textContent=res.mnemonic;
-  addrRows($("#addrs tbody"), res.rows);
+  renderAddrs($("#addrs"), res.rows);
   const ppb=$("#pp tbody"); ppb.innerHTML="";
   for(const p of res.perParagraph){
     const tr=document.createElement("tr");
-    tr.innerHTML=`<td>${p.i}</td><td class="mono" style="font-size:11px">${p.md5}</td><td>${p.first}</td><td>${p.last}</td><td>${p.len}</td><td class="muted">${p.preview.replace(/</g,"&lt;")}</td>`;
+    tr.innerHTML=`<td>${p.i}</td><td class="mono" style="font-size:11px;white-space:nowrap">${p.md5}</td><td>${p.first}</td><td>${p.last}</td><td>${p.len}</td><td class="pre">${p.preview.replace(/</g,"&lt;")}</td>`;
     ppb.appendChild(tr);
   }
-  if(res.hit){ b.className="banner win"; b.style.background=""; b.style.color=""; b.style.borderColor=""; b.textContent="🎯 MATCH — one of the escrow addresses appeared above. Copy its private key. Do NOT share it."; }
-  else { b.className="banner"; b.textContent=""; }
+  if(res.hit) banner("win","🎯 MATCH — an escrow address appeared above. Copy its private key. Do NOT share it.");
 }
 $("#go").onclick=compute;
 $("#ego").onclick=async()=>{
   const res=await post("/api/entropy",{hex:$("#ehex").value,indices:12});
-  if(!res.ok){ alert(res.error); return; }
-  addrRows($("#eaddrs tbody"), res.rows);
+  if(!res.ok){ banner("err",res.error); return; }
+  renderAddrs($("#eaddrs"), res.rows);
 };
-$("#load").onclick=async()=>{
-  // certified Stage One carrier (Hal Finney "Bitcoin and me", FFWW edge-edited). Good sanity check: CRLF? no — Stage One is LF LF, and MD5 must be 9dd2efb9...
-  $("#text").value = STAGE1;
-  $("#sep").value="LFLF"; $("#mode").value="raw";   // raw preserves the single-newline [edited slightly] trailer -> MD5 must be 9dd2efb9...
-  compute();
-};
+$("#load").onclick=()=>{ $("#text").value=STAGE1; $("#sep").value="LFLF"; $("#mode").value="raw"; compute(); window.scrollTo({top:0}); };
 (async()=>{
-  const s=await fetch("/api/selftest").then(r=>r.json());
-  const el=$("#st");
-  el.className="badge "+(s.pass?"ok":"bad");
-  el.textContent=s.pass?"derivation certified ✅ (Stage-1 + WIF vector)":"derivation FAILED ❌";
+  try{
+    const s=await fetch("/api/selftest").then(r=>r.json());
+    const el=$("#st"); el.className="badge "+(s.pass?"ok":"bad");
+    el.textContent=s.pass?"certified ✅":"FAILED ❌";
+  }catch(e){ $("#st").textContent="offline"; }
 })();
 const STAGE1 = `I thought I'd write about the last four years, an eventful time for Bitcoin and me.
 
