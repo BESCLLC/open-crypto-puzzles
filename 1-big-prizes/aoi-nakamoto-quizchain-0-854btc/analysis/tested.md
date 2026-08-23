@@ -1195,3 +1195,46 @@ The remaining open variable is the marking rule / carrier scope, and the
 highest-value missing input is a primary-source statement of the Stage-Two
 scope within "Second" (a start/end, a single section) -- the r/Grycoin threads
 are the source and were not reachable from this environment.
+
+## No Stage-2 prefix, the p77 stale-id anomaly, and cleczc's un-pinnable filter (2026-08-23, cont.)
+
+**No MD5 prefix exists for either RBB stage.** Stage 1: "no first digits of MD5
+hash, nothing." Stage 2: none published (this file, above). Every prefix on
+record -- `f8e`/`1d` (Block 76), `3c6`/`7759227` (Grycoin Block 2 / cleczc),
+`9dd` (Stage One's *already-solved* solution) -- belongs to another block.
+There is no free filter for the live escrow, which is why 2-to-4 marked letters
+among ~37,000 positions cannot be brute-forced.
+
+**p77 is a stale pre-edit id, not a dedup salt.** "What?" is the only duplicated
+text in all 273 paragraphs, so the salt theory had one data point and is now
+retracted. `8b71bade` is not MD5 of "What?" nor of ~30,000 counter/salt forms
+(`"What?"+n`, char salts, nested hashes, HTML-element forms) nor of ~19
+plausible short originals. Since `data-p-id` is provably content-derived (exact
+MD5 for 272/273), the most consistent reading is that Wattpad assigns the id at
+paragraph creation and it persists across edits: `8b71bade` is the MD5 of an
+*original* line later replaced with "What?", sitting between p76 ("two ways...
+reverse Turing test") and p78 ("Of course you know what a Turing test is"). That
+original is a candidate marked paragraph, recoverable only from a pre-edit
+snapshot (Wayback/Wattpad revision), all egress-blocked from this environment.
+Any candidate can be verified instantly: MD5 must equal `8b71bade9685...`.
+
+**cleczc cannot be pinned by its own filter.** The 10-paragraph Grycoin Block 2
+example (base `7759227`, solved form `3c6`) was attacked as a calibration
+problem, since the author says its marks follow from the Stage-One solution:
+
+| Operation | Coverage | Hits 3c6 |
+|---|---|---|
+| Paragraph edge-flip (swapcase first + upper last), all marked-sets | 2^10 x 2 ops | 0 |
+| ITASM-complement marked paragraphs {2,3,5,6,7}, edge-flip | (in the above) | 0 |
+| Sentence edge-flip (both / first-only), all subsets | 2^15 x 2 | ~8 each = chance rate |
+| Sentence raise-last-only, all subsets | 2^15 | 0 |
+| Aoi's literal in-text example: "I"->"i" + "himself"->"himselF" | 1 | 0 |
+
+The in-text "I"/"himself" changes are framed hypothetically ("if you thought the
+I was one of them") and do not hit the filter -- they teach the mechanism, not
+the marks. A 12-bit prefix over 32,768 candidates yields chance-rate hits with
+no way to distinguish the intended set, matching the earlier large 3c6 sweeps.
+cleczc's true marked set is therefore not recoverable from the text plus filter;
+it needs the published winning solution from its Reddit thread. That solved
+capitalization -- 10 paragraphs, answer known -- is the cleanest available
+Rosetta stone for the Stage-Two marking rule, and remains the gating input.
