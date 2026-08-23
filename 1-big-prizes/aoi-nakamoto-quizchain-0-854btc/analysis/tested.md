@@ -1238,3 +1238,29 @@ cleczc's true marked set is therefore not recoverable from the text plus filter;
 it needs the published winning solution from its Reddit thread. That solved
 capitalization -- 10 paragraphs, answer known -- is the cleanest available
 Rosetta stone for the Stage-Two marking rule, and remains the gating input.
+
+## Bounded deterministic marked-set search, exhausted to subset size 6 (2026-08-23, cont.)
+
+The "deliberate anomaly" features (capital-final endings [9], trailing spaces
+[13], internal `<br>` [10], question endings [13], Hal block [230-234]) were
+run as a bounded, ordered search rather than one feature at a time:
+
+| Step | Candidate sets | Transforms | Result |
+|---|---|---|---|
+| Feature intersections k=2,3 | 3 non-empty | 6 variants x 2 seps x idx0-5 | 0 |
+| Neighbor expansions of the 9 (i-1, i+1, both) | ~28 sets | same | 0 |
+| Capital-final 9 as marked set | 1 | lower-last / swap-first / edge x 3 enc x idx0-20 | 0 |
+| **Pool brute**: all size 4-6 subsets of the 18-index pool {127,138,188,189,193,206,208,210,212,228,230-234,236,238,258} | 30,192 subsets | 6 transform variants (last-token-upper/title, last-letter-lower, first-alpha-upper/lower, first+last-token-upper), CRLF CRLF, both escrows, idx0 | **0 (181,152 tested)** |
+
+The capital-final 9 were verified to be content-incidental: every one ends on an
+all-caps acronym or single-letter answer (TOM, II, IBM, II, S, WW, STNM, STNM,
+C), all inside Part III's "2. The Satoshi Code" explanation, and their finals
+spell `MIMISWMMC` (no signature). They are not an applied transform and cannot
+be "raised" (already capital).
+
+This closes the small-deterministic-marked-set search over the chapter's
+computable anomalies. Combined with every prior structural elimination, the
+conclusion is firm and matches the 2026-08-19 finding: the Stage-Two marks are
+not singled out by any feature of the carrier. The next input must be external
+-- the solved cleczc capitalization or the ca6jxv winning comment -- not another
+structural sweep.
