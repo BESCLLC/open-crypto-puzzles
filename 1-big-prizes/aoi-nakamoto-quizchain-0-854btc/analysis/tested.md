@@ -1113,3 +1113,85 @@ demonstrates an operation twice, in the part whose own numeral is II, right
 after saying "two and only two changes", the demonstration is probably about
 *something*. The unresolved question is what object the operation applies to,
 and that is not the chapter's paragraphs under any selector tried here.
+
+## Carrier bytes certified, and the Stage-One predicate exhausted on Second (2026-08-23)
+
+The Wattpad page source was recovered with its `data-p-id` attributes intact.
+Each `data-p-id` is Wattpad's own MD5 of that paragraph's canonical text. The
+273-paragraph carrier used throughout this folder reproduces **272 of 273**
+exactly; the one exception is `p77 = "What?"`, byte-identical to `p33 = "What?"`
+-- MD5 of that text equals p33's stored id, and p77's differs only because
+Wattpad salts the id of a duplicate paragraph. So the per-paragraph carrier
+bytes are not in question: they are Wattpad's canonical bytes. The only open
+byte variable is the inter-paragraph separator, and the "get the 2019 rendered
+copy" lead (leads.md #1) is closed -- the rendered source matches what is
+already hashed.
+
+The author's live-rehash statement ("two line breaks between each", recorded as
+"13 10 13 10") makes **CRLF CRLF** the candidate separator for the funded
+escrow. Every Stage-Two negative in this folder had used LF LF only. Re-run
+under CRLF and CRLF CRLF:
+
+| Test | Separators | Result |
+|---|---|---|
+| Full contiguous-span sweep, ITASM-exception edge rule, idx0 | CRLF, CRLF CRLF | 0 (each 37,401 spans) |
+| Corrected sweep with **`swapcase`** first-letter op (fixes lowercase `a)`-`f)` headings), all spans | LF LF and CRLF CRLF x {br=nothing, br=LF} | 0 (all 4 passes, 37,401 spans each) |
+| Keepset sweep -- ITASM, STNM, ISTNM, NMST, SATOSHI, THOMAS, HALFINNEY, AOI, SECOND, IAMSATOSHI, IM, MII, and 9 more | LF LF, CRLF CRLF, idx 0-59 | 0 |
+
+The keepset diagnostic is the point: on Hal's 16-paragraph post ITASM marks
+exactly 4 paragraphs (FFWW). On the 273-paragraph chapter every candidate
+keepset marks **118-223** paragraphs. The paragraph-initial mechanism is not
+scale-invariant, so no keepset reproduces the Stage-One shape on whole-Second,
+and none reaches either escrow.
+
+The pre-existing capitalization anomalies (ppM idx72, VIrgin idx127, BItcoin
+idx135 -- reading **M I I**, which Section III defines as Satoshi's "extra I,
+missing M" and the "II" of Harold Thomas Finney II) were tested both as payload
+and as selector:
+
+| Reading | Configs | Result |
+|---|---|---|
+| Normalize ppM/VIrgin/BItcoin (5 subsets A-E) | 20 x {2 br, 2 sep} x idx 0-7,76 x both escrows | 0 |
+| Anomaly paragraphs {72,127,135}, idx95, quartet as marked, edge-op | 28 | 0 |
+
+The "I am" reading (unique `IM` initial adjacency at idx162-163, "III. Second
+Identity"/"1. My Identity", followed by literal "I am" at 164/166, mirroring
+bcflick's `In/Basically/Mike/I'm` = I B M then "I'm"): recasing "I am" at the
+opening/in-section/chapter-wide occurrences, plus combined "I am STNM" on the
+Identity section, 64 configs across both serializations and both escrows -- 0.
+
+The Satoshi-Mystery chapter (its own published per-paragraph MD5 oracle
+reproduced byte-for-byte; `cc9485a` = MD5("Hal Finney") = its answer) is a
+Hal-post-shaped carrier with a single non-ITASM initial (Y). Exhaustive over
+all 2^11 whole-paragraph exception subsets x 4 joins x trailing-strip, idx0,
+plus the justified single-Y reading at idx 0-29 -- 0.
+
+### The derivation was reopened and largely closed
+
+Grycoin Block 2's "change only the capitalization" is stated to bind **both**
+stages of block 77 (the "copy paste" in the comments means *preserve the
+carrier verbatim*, not remove words; para 266's "remove a couple of words" is
+semantic interpretation of Hal's prose, not the serialization rule). So the
+operation is capitalization-only. That leaves the solution-text -> key
+derivation as the assumption to test independently, since the author separated
+"which capitalization changes" (which she knew) from "how to claim the prize"
+(which she said she did not).
+
+`data/pipeline-stages.json` and `tools/oracle.py --selftest` certify
+MD5 -> BIP39 -> BIP44 `m/44'/0'/0'/0/i` against the author's **own** published
+vector (entropy `2941774a...` -> WIF at idx1), and blocks-structure records the
+whole ~90-block series using it. Tested anyway, on the 8-9 strongest
+capitalization candidates:
+
+| Derivation family | Coverage | Result |
+|---|---|---|
+| 19 text->key methods: BIP44 idx0-5, raw-MD5-key (comp/uncomp), MD5x2, SHA256 brainwallet (comp/uncomp), SHA256(md5hex), SHA256->BIP39, double-SHA | 9 candidates x 2 encodings x both escrows | 0 |
+| BIP44 index scan | 8 candidates x 2 encodings x idx **0-5000** x both escrows | 0 |
+
+If any of these candidate texts were correct, one of ~40,000 (text x method x
+index) checks should have hit. The derivation is therefore not the (sole)
+broken link -- consistent with it being the most-certified assumption we have.
+The remaining open variable is the marking rule / carrier scope, and the
+highest-value missing input is a primary-source statement of the Stage-Two
+scope within "Second" (a start/end, a single section) -- the r/Grycoin threads
+are the source and were not reachable from this environment.
