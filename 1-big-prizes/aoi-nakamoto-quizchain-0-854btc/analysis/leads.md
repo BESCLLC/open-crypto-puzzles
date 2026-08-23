@@ -138,3 +138,55 @@ The author also stated, in the Real Big Block discussion thread, that "once
 someone figures out the format for the first stage, they will also have a big
 hint for the format of this second stage", which is consistent with one
 transform across both.
+
+## 00. Provenance recovery now outranks all computation (2026-08-23)
+
+The 2026-08-23 session (recorded in `tested.md`) operationally exhausted the
+natural family of chapter-internal selectors: every keepset, every contiguous
+span under the exact swapcase Stage-One predicate, sentence/edge granularities,
+the planted anomalies (MII, vOIce, capital-final 9, trailing spaces, internal
+br), feature intersections, neighbor expansions, and a bounded size-4..6 subset
+brute over the 18-index anomaly pool -- across both serializations, both
+escrows, indices to 5000, and 19 text-to-key derivations. All zero. Carrier
+bytes are certified against Wattpad's own data-p-id oracle (272/273; p77 is a
+stale pre-edit id, see tested.md).
+
+The locked model:
+
+    SECOND
+    |- three synthetic FFWW->STNM replicas (paras 4-7, 92-95, 167-170)
+    |    = pedagogical landmarks: complete Stage-One signs, one per Part
+    |    = FFWW dedication ("Fran Finney -- for you", FF resolved via the
+    |      LessWrong FranFin find) + STNM signature
+    |- worked Stage-One explanation (paras 227-245)
+    |    = teaches what the sign species means
+    '- real Stage-Two marks
+         != the replicas, != any global predicate, != structural anomalies
+         recognized only via knowledge imported from the external worked
+         examples (Stage-One solution; first-run Blocks 2 and 29 lineage)
+
+Wording matters: this is operational exhaustion of the tested families, not a
+proof that no computable feature exists. But further predicate invention from
+chapter-internal structure is overfitting, not search.
+
+What would break it open, in value order (all require sources this
+environment cannot reach -- Reddit, Wattpad, and web.archive.org are
+egress-blocked; the general search index does not surface r/Grycoin content
+at all, verified with exact-thread-id queries):
+
+1. The solved Grycoin Block 2 (cleczc) capitalization -- the winning comment.
+   Ten paragraphs, base `7759227`, solved `3c6`; the author says its marks
+   follow from the Stage-One solution. One verified string calibrates the
+   recognition rule; porting it to Second is then a single derivation.
+2. The ca6jxv winning-solver exchange beyond "9dd (copypasted)" -- any worked
+   per-letter detail.
+3. A pre-2019-07-23 snapshot of the Wattpad chapter -- recovers p77's original
+   line (verifiable instantly: MD5 must equal `8b71bade9685...`).
+4. The chn8un discussion thread read in full against the locked model -- any
+   sentence of the form "recognize X from the first stage" or "look for the
+   same thing in ...".
+
+Recovery channels a human can use: reddit.com directly, web.archive.org
+(both the Reddit threads and wattpad.com/720888559-second), reveddit or
+pushshift-derived mirrors for deleted comments, and the Wattpad API's
+part-revision metadata if any.
