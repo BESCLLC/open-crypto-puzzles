@@ -8,10 +8,15 @@
   "series": null,
   "author": {
     "name": "Smith, Lyle & Moore",
-    "handles": ["site:smithlylemoore.com"],
+    "handles": [
+      "site:smithlylemoore.com"
+    ],
     "url": "https://www.smithlylemoore.com/treasure-hunt"
   },
-  "published": { "date": "2022-07-29", "url": "https://www.smithlylemoore.com/treasure-hunt" },
+  "published": {
+    "date": "2022-07-29",
+    "url": "https://www.smithlylemoore.com/treasure-hunt"
+  },
   "chain": "bitcoin",
   "prize": {
     "amount": 0.031777,
@@ -21,33 +26,100 @@
     "note": "3,177,700 sats, funded in a single transaction on 2022-07-29, unspent"
   },
   "addresses": [
-    { "address": "bc1q0akdjvrc2csau2n3gyxa3xcq0fss852x997m9y", "chain": "bitcoin", "role": "escrow", "label": "main", "explorer": "https://mempool.space/address/bc1q0akdjvrc2csau2n3gyxa3xcq0fss852x997m9y", "expected": "3177700 sats", "verified_on": "2026-08-16", "verified_state": "funded-unspent" },
-    { "address": "bc1qax0hsnwnxl7393awtc3hsy0ftm6tg4tyk2nfja", "chain": "bitcoin", "role": "payout", "label": "my wallet (destination if solved)", "explorer": "https://mempool.space/address/bc1qax0hsnwnxl7393awtc3hsy0ftm6tg4tyk2nfja", "expected": "n/a", "verified_on": "2026-08-16", "verified_state": "unknown" }
+    {
+      "address": "bc1q0akdjvrc2csau2n3gyxa3xcq0fss852x997m9y",
+      "chain": "bitcoin",
+      "role": "escrow",
+      "label": "main",
+      "explorer": "https://mempool.space/address/bc1q0akdjvrc2csau2n3gyxa3xcq0fss852x997m9y",
+      "expected": "3177700 sats",
+      "verified_on": "2026-08-16",
+      "verified_state": "funded-unspent"
+    },
+    {
+      "address": "bc1qax0hsnwnxl7393awtc3hsy0ftm6tg4tyk2nfja",
+      "chain": "bitcoin",
+      "role": "payout",
+      "label": "my wallet (destination if solved)",
+      "explorer": "https://mempool.space/address/bc1qax0hsnwnxl7393awtc3hsy0ftm6tg4tyk2nfja",
+      "expected": "n/a",
+      "verified_on": "2026-08-16",
+      "verified_state": "unknown"
+    }
   ],
-  "puzzle_type": ["bip39-seed", "password-pages", "web-tree"],
+  "puzzle_type": [
+    "bip39-seed",
+    "password-pages",
+    "web-tree"
+  ],
   "target_format": "BIP39 12 words, English wordlist, plus a passphrase, BIP84 m/84'/0'/0'/0/0, P2WPKH",
   "derivation": {
     "summary": "12 BIP39 words plus a passphrase, scattered across 3 password-gated web pages, derived along BIP84 to a P2WPKH address matching the escrow; the author separately published the account xpub",
     "oracle": "tools/oracle.py",
     "oracle_certified": true,
-    "certified_against": "the published account xpub, whose m/0/0 P2WPKH address equals the escrow; a known-wrong BIP39 test vector is also confirmed to produce NO MATCH. The BIP39-mnemonic-to-seed leg has no known-good vector, since 0 of 12 words are held"
+    "certified_against": "the published account xpub, whose m/0/0 P2WPKH address equals the escrow, and a known-wrong BIP39 test vector confirmed to produce NO MATCH. tools/oracle_pure.py additionally certifies the BIP39-mnemonic-to-seed leg against the official BIP39 test vector and the whole pipeline against the official BIP84 vector address at m/84'/0'/0'/0/0, and agrees byte for byte with bip_utils on 25 random mnemonics crossed with 5 passphrases"
   },
   "difficulty_left": "insight",
   "difficulty_note": "the 12 words and passphrase are locked behind 3 password-gated pages, each requiring a specific author-intended answer to a riddle rather than a decodable cipher; about 5,000 candidates have been tried across the 3 locks with 0 hits, none of them a certified exhaustive negative",
-  "tested_total": { "candidates": 5000, "families": 6, "certified": false },
+  "tested_total": {
+    "candidates": 5000,
+    "families": 7,
+    "certified": false
+  },
   "leads": [
-    { "rank": 1, "title": "retry the West lock in Title Case", "cost": "minutes", "status": "open" },
-    { "rank": 2, "title": "retry the East lock on the exact Gandalf 'journey doesn't end here' phrasing", "cost": "minutes", "status": "open" },
-    { "rank": 3, "title": "reverse image search the LifeFlashBeforeEyes.mp4 clip stills", "cost": "hours", "status": "open" },
-    { "rank": 4, "title": "a fresh reading of the South lock's own slug pun", "cost": "needs new information", "status": "open" }
+    {
+      "rank": 1,
+      "title": "retry the West lock in Title Case",
+      "cost": "minutes",
+      "status": "open"
+    },
+    {
+      "rank": 2,
+      "title": "retry the East lock on the exact Gandalf 'journey doesn't end here' phrasing",
+      "cost": "minutes",
+      "status": "open"
+    },
+    {
+      "rank": 3,
+      "title": "reverse image search the LifeFlashBeforeEyes.mp4 clip stills",
+      "cost": "hours",
+      "status": "open"
+    },
+    {
+      "rank": 4,
+      "title": "a fresh reading of the South lock's own slug pun",
+      "cost": "needs new information",
+      "status": "open"
+    },
+    {
+      "rank": 5,
+      "title": "exhaust an unsourced 11-word reconstruction whose only gap is slot 10",
+      "cost": "minutes of compute, but unbounded on the passphrase",
+      "status": "open"
+    }
   ],
   "solutions": [],
   "artifacts": [],
   "sources": [
-    { "title": "Smith, Lyle & Moore, Treasure Hunt page", "url": "https://www.smithlylemoore.com/treasure-hunt", "date": "2022-07-29", "archived": null },
-    { "title": "Bitcoin Treasure Hunt - 2021 (still unsolved)", "url": "https://stacker.news/items/658645", "date": "2024-08-23", "archived": null },
-    { "title": "Escrow address", "url": "https://mempool.space/address/bc1q0akdjvrc2csau2n3gyxa3xcq0fss852x997m9y", "date": "2026-08-16", "archived": null }
+    {
+      "title": "Smith, Lyle & Moore, Treasure Hunt page",
+      "url": "https://www.smithlylemoore.com/treasure-hunt",
+      "date": "2022-07-29",
+      "archived": null
+    },
+    {
+      "title": "Bitcoin Treasure Hunt - 2021 (still unsolved)",
+      "url": "https://stacker.news/items/658645",
+      "date": "2024-08-23",
+      "archived": null
+    },
+    {
+      "title": "Escrow address",
+      "url": "https://mempool.space/address/bc1q0akdjvrc2csau2n3gyxa3xcq0fss852x997m9y",
+      "date": "2026-08-16",
+      "archived": null
+    }
   ],
   "third_party_material": "no Wix page mirrors, no audio/video files, no Instagram media shipped; only 3 short verbatim riddle quotes (about 220 words total) with the site URL, and my own derived structure/pipeline data",
-  "last_updated": "2026-08-16"
+  "last_updated": "2026-09-03"
 }

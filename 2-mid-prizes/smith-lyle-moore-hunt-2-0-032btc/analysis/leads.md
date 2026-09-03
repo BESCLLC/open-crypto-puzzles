@@ -46,6 +46,24 @@ cost: it needs a new interpretation of the pun, not a longer list of candidates.
 Reddit thread on this hunt (88 comments) contains one reader's guess ("use a different
 title"), explicitly not an author-confirmed answer, and it did not lead anywhere when tried.
 
+## 5. Exhaust any partial reconstruction of the seed before trusting it
+
+A reader supplied a 12-word reconstruction with 11 slots filled and one empty, with no stated
+provenance. The words are not recorded in this repository: nothing corroborates them, and an
+11 of 12 reconstruction published against a live escrow mostly helps a sniper.
+
+The method is worth keeping even though that particular fragment did not pay out. One unknown
+slot is bounded where the three insight locks are not: only the checksum-closing candidates
+for the gap are derivable at all (147 of 2048 in this case), so the gap costs seconds and the
+passphrase is the entire real cost. `tools/search_missing_word.py` automates it. 155,232
+(word, passphrase) pairs were checked with 0 hits; see
+[word10-reconstruction.md](word10-reconstruction.md) for the families covered and the oracle
+certification behind the negative.
+
+Confirmed if any candidate reaches an oracle MATCH. A no-hit result confirms nothing either
+way about the words, since a passphrase outside the list explains it equally well. It supplies
+no password for any gate, so it does not displace leads 1 through 4.
+
 ## External help
 
 I have not contacted the band or its community about this puzzle. The site's own "get hints"

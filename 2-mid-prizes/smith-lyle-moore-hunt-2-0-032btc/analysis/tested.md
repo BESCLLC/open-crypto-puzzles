@@ -26,3 +26,17 @@ Cumulative candidate count across the 3 open locks: about 5,000, 0 hits, all unc
 the sense above. The site's gated-page mechanism itself is server-side (a real browser cannot
 bypass it by reading the page body before entering the password), which I confirmed directly
 rather than assumed.
+
+## Addendum: a partial seed reconstruction with one unknown slot
+
+| Hypothesis | Space | Method | Result | Witness | Date |
+|---|---|---|---|---|---|
+| A reader-supplied 12-word reconstruction with 11 slots filled and 1 unknown is the seed, with the passphrase empty, or the Glimmer title, or `supernova`, or a site password, or a band-name variant | 147 checksum-valid words for the gap x 27 passphrases = 3,969 pairs | `tools/search_missing_word.py` through `tools/oracle_pure.py`, exact match against the published account xpub and the escrow | 0 match | yes: `tools/oracle_pure.py --selftest` reproduces the official BIP39 seed vector, the official BIP84 vector address, and the published xpub-to-escrow identity, and rejects a known-wrong mnemonic | 2026-09-03 |
+| The same reconstruction, passphrase drawn from the Glimmer title and lyric (cased, spaced and joined variants) plus site-theme strings | 147 x 1,029 passphrases = 151,263 pairs | same harness | 0 match | same witness as the row above | 2026-09-03 |
+
+Running total on that reconstruction: 155,232 pairs, 0 hits, at a measured 118 pairs/sec.
+
+These are certified negatives in the derivation sense: a known-good mnemonic is re-found
+through the same code, so a NO MATCH is trustworthy math. They are not negatives about the
+words, whose provenance is unknown and which no opened lock corroborates. The words are
+deliberately not recorded in this repository while the escrow is live and unswept.

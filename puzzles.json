@@ -2973,13 +2973,13 @@
         "summary": "12 BIP39 words plus a passphrase, scattered across 3 password-gated web pages, derived along BIP84 to a P2WPKH address matching the escrow; the author separately published the account xpub",
         "oracle": "tools/oracle.py",
         "oracle_certified": true,
-        "certified_against": "the published account xpub, whose m/0/0 P2WPKH address equals the escrow; a known-wrong BIP39 test vector is also confirmed to produce NO MATCH. The BIP39-mnemonic-to-seed leg has no known-good vector, since 0 of 12 words are held"
+        "certified_against": "the published account xpub, whose m/0/0 P2WPKH address equals the escrow, and a known-wrong BIP39 test vector confirmed to produce NO MATCH. tools/oracle_pure.py additionally certifies the BIP39-mnemonic-to-seed leg against the official BIP39 test vector and the whole pipeline against the official BIP84 vector address at m/84'/0'/0'/0/0, and agrees byte for byte with bip_utils on 25 random mnemonics crossed with 5 passphrases"
       },
       "difficulty_left": "insight",
       "difficulty_note": "the 12 words and passphrase are locked behind 3 password-gated pages, each requiring a specific author-intended answer to a riddle rather than a decodable cipher; about 5,000 candidates have been tried across the 3 locks with 0 hits, none of them a certified exhaustive negative",
       "tested_total": {
         "candidates": 5000,
-        "families": 6,
+        "families": 7,
         "certified": false
       },
       "leads": [
@@ -3006,6 +3006,12 @@
           "title": "a fresh reading of the South lock's own slug pun",
           "cost": "needs new information",
           "status": "open"
+        },
+        {
+          "rank": 5,
+          "title": "exhaust an unsourced 11-word reconstruction whose only gap is slot 10",
+          "cost": "minutes of compute, but unbounded on the passphrase",
+          "status": "open"
         }
       ],
       "solutions": [],
@@ -3031,7 +3037,7 @@
         }
       ],
       "third_party_material": "no Wix page mirrors, no audio/video files, no Instagram media shipped; only 3 short verbatim riddle quotes (about 220 words total) with the site URL, and my own derived structure/pipeline data",
-      "last_updated": "2026-08-16",
+      "last_updated": "2026-09-03",
       "folder": "2-mid-prizes/smith-lyle-moore-hunt-2-0-032btc"
     },
     {

@@ -63,6 +63,10 @@ the three locks has been read directly and carries none of the 12 words (full ch
 
 ### Derivation and oracle
 
+If `pip install bip_utils` fails while building `crcmod` with
+`AttributeError: install_layout`, install with `SETUPTOOLS_USE_DISTUTILS=stdlib` set;
+`tools/oracle_pure.py` needs no compiled dependency at all and checks the same thing.
+
 ```
 python3 tools/oracle.py --selftest                      # must print SELFTEST OK
 python3 tools/oracle.py "w1 w2 ... w12"                  # empty passphrase
@@ -121,6 +125,7 @@ Full ledger in [analysis/tested.md](analysis/tested.md). Summary:
 | Puzzle-wide lowercase password rule | 2 known passwords retested in 3 case forms each | direct page-password submission on open gates | refuted: only Title Case succeeds | yes: both known-good passwords reproduced | 2026-07-25 |
 | Cover-art trailer-byte channel (word 1) | 1,585 images | byte scan after EOF, same method that finds the real payload on the solved Hunt #1 cover | 0 match on Hunt #2 material | yes: positive control on the Hunt #1 cover | 2026-07-14 |
 | Audio steganography on the public master | 1 file, 4 techniques | Morse/reverse/LSB/spectrogram analysis | 0 match, no alternate mix found | uncertified | 2026-07-10 |
+| An unsourced 11-word fragment with only slot 10 missing | 147 checksum-valid words x 27 passphrases = 3,969 pairs | `tools/search_missing_word.py` through `tools/oracle_pure.py` | 0 match | yes: official BIP39 and BIP84 vectors re-found through the same code | 2026-09-03 |
 
 Cumulative across the 3 open locks: about 5,000 candidates, 0 hits, all uncertified per the
 witness definition above (no known-good answer exists yet to prove full coverage of any one
@@ -156,6 +161,9 @@ Full notes: [analysis/leads.md](analysis/leads.md).
 | `analysis/leads.md` | full notes behind the 4 ranked leads |
 | `images/02-structure-branches.svg` | the site's branch structure, colored by state |
 | `tools/oracle.py` | candidate checker (mnemonic plus passphrase against the escrow), certified |
+| `tools/oracle_pure.py` | the same check with no compiled dependency; certifies the BIP39-to-seed leg too |
+| `tools/search_missing_word.py` | exhausts one unknown BIP39 slot against a passphrase list |
+| `analysis/word10-reconstruction.md` | an unsourced 11-word fragment, its sweep, and what it does not prove |
 | `tools/fig_structure.py` | generates images/02-structure-branches.svg from data/site-structure.csv |
 
 ## Sources
