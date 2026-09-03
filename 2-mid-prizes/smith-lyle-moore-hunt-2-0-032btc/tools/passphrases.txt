@@ -2,10 +2,42 @@
 glimmer
 Glimmer
 GLIMMER
-supernova
-Supernova
+ocean
+Ocean
+theocean
+glimmerintheocean
+aglimmerintheocean
+hightide
+HighTide
+high tide
+highTide
+coast
+thecoast
+ship
+onthisship
+waitfortheday
+theday
+furtherandfurtheraway
+further
+away
+shehadthatlook
+thatlook
 amphitrite
 Amphitrite
+poseidon
+Poseidon
+sevenseas
+seven seas
+rulerofthesevenseas
+iberuleroftheseven seas
+witchoftheeast
+witchofthewest
+wizardofoz
+dorothy
+supernova
+Supernova
+borntobewild
+Born to Be Wild
 gold
 Gold
 werewolf
@@ -16,13 +48,32 @@ fate
 Fate
 hollywoodforever
 Hollywood Forever
-borntobewild
-Born to Be Wild
 dhaniharrison
+DhaniHarrison
 smithlylemoore
-sevenseas
-seven seas
-rulerofthesevenseas
+SmithLyleMoore
+thommilesroyle
 treasure
-glimmer64
+treasurehunt
+messageinabottle
+bottle
+her
+she
+mermaid
+siren
+nautilus
+nemo
+albatross
+semaphore
+20000leagues
+youshallpass47
+electricfeel64
 north64
+south64
+east64
+west64
+glimmer64
+gilligan
+Gilligan
+professor
+Professor

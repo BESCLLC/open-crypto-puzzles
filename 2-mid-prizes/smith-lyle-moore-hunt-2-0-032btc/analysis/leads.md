@@ -1,5 +1,8 @@
 # Leads, in full
 
+Lead 5 is the one to do first: it is the only one that is legwork rather than
+guesswork, and the page that prompted it proves the words are printed in the open.
+
 ## 1. West lock (`wt1jy`): read "unbridaled" as a pointer to The Princess Bride
 
 The riddle's misspelling is the planted detail, and it spells out where the answer comes
@@ -39,7 +42,17 @@ riddle's "images start flashing before your eyes" is pointing at:
 That half is untried. Candidates, lowercase single tokens, best first: `whiteshores`,
 `silverglass`, `fargreencountry`, `swiftsunrise`, `greyraincurtain`.
 
-Confirmed if one opens `c2ozw`. Cost: minutes. Untested, same caveat as lead 1.
+There is a second family, and it now has harder evidence behind it than the first. An open
+page earlier on this same branch prints the password `witchoftheeast` in clear, which puts
+The Wizard of Oz on the East branch as a fact rather than as a reading. Oz answers the
+riddle's actual question better than Tolkien does: the riddle asks whether the images are a
+life passing or hallucinations, and the ending of Oz is precisely the argument over whether
+what Dorothy saw was real or a dream. On that reading the answer to "is this the end?" is her
+line on waking: `theresnoplacelikehome`, `noplacelikehome`, and then `kansas`, `dorothy`,
+`overtherainbow`, `emeraldcity`, `toto`, `yellowbrickroad`.
+
+Try the Oz family first. Confirmed if one opens `c2ozw`. Cost: minutes. Untested, same caveat
+as lead 1.
 
 ## 3. South lock (`b3vye`): "Name 6" may want the first-season credit, not a character name
 
@@ -74,16 +87,22 @@ This has not been attempted; it needs a reverse image search tool and costs on t
 an hour. Note that lead 2 predicts the clip is set dressing for the Gandalf vision rather
 than a quotation in its own right, so a hit on lead 2 kills this one.
 
-## 5. Re-read the North branch against the whale wording in the circulating fragment
+## 5. Re-walk every open page looking for numbered word tags, North first
 
-A partial word list circulating for this hunt reads "when you depart find mystery hunt gather
-whale blood ... virtual moon". Its provenance is not established and "virtual moon" is
-Hunt #1 material, so the list as a whole is suspect (see analysis/tested.md for the sweep
-that failed to confirm it). One detail in it is still worth acting on: "whale" is a word, and
-North is the whale-themed branch that was written off as carrying none of the 12 words. If
-any part of that fragment is genuine Hunt #2 material, North is not empty and the branch's
-pages deserve a second read for word-shaped text rather than for a hidden payload. Confirmed
-or killed by re-reading the four North pages; cost: under an hour.
+This is now the highest-value lead of the five, and it is ordinary work rather than an
+insight problem. The East branch's message-in-a-bottle page prints seed words 1 to 5 as small
+numbered tags in plain sight (see analysis/mechanism.md). That is the hunt's word channel: not
+bytes after an image's EOF marker, not Morse in an alternate mix, just words printed on a
+page with their position next to them. Words 6 to 12 are very likely printed the same way,
+and the search for them so far was looking for hidden payloads instead.
+
+North first, for two reasons. It is the branch written off as carrying none of the 12 words,
+and the circulating fragment's tail contains "whale", which is the North branch's own theme.
+If a numbered tag turns up anywhere on North, the dead-end finding in analysis/tested.md is
+wrong and the branch is a carrier like the others.
+
+Confirmed or killed by re-reading every open page on all four branches for numbered tags;
+cost: an hour or two, no new insight required.
 
 ## External help
 

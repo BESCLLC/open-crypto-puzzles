@@ -26,9 +26,14 @@ The branch chains, in the order their passwords are entered:
 | Branch | Passwords, entry to lock |
 |---|---|
 | South | `south64`, `electricfeel64`, `Gilligan`, `Jonas`, `Thurston`, `Lovey`, `Ginger`, then the locked `b3vye` |
-| East | `east64`, `east64`, `albatross`, then `semaphore` / `20000leagues` / `youshallpass47` on the middle pages, then the locked `c2ozw` |
+| East | `east64`, `east64`, `witchoftheeast`, `albatross`, then `semaphore` / `20000leagues` / `youshallpass47` on the middle pages, then the locked `c2ozw` |
 | West | `west64`, then the locked `wt1jy` |
 | North | `north64`, then a whale-themed chain ending on a static "coming soon" page |
+
+`witchoftheeast` sits on an open East page headed "You find a message in a bottle... Could it
+be from her?" ("her" being Amphitrite, from the entry line). That page prints the password in
+clear under a "Continue Eastward" button, and it is also the first confirmed word carrier of
+this hunt: see the next section.
 
 `electricfeel64` and `youshallpass47` are the two passwords that show the author's habit
 plainly: the first is a pun on an electric eel, the second inverts Gandalf's "you shall not
@@ -98,17 +103,36 @@ author hides seed words, not as part of the live puzzle. Its seed was
 | 11-12 | words 11-12 | a "future song" ticket prop | inherited endgame page, already open | present, but this is Hunt #1's own endgame carried over, already read, and not new information |
 | passphrase | "in the song" | the closing track's title | the Glimmer track title or lyric | not testable without the 12 words |
 
-The practical conclusion: every carrier channel that is reachable without solving one of the
-three insight locks has been checked and is either empty (refuted) or inherited scaffolding
-from Hunt #1 that carries no new word. All 12 words are behind West, East, and South.
+That table is the Hunt #1 template, and the live site has now refuted it as a model for this
+hunt. The real channel is far plainer: a branch page prints the seed words directly, as small
+numbered tags, each tag carrying the word's position in the 12.
 
-One correction to that conclusion. A partial word list has been circulating for this hunt,
-reading "when you depart find mystery hunt gather whale blood ... virtual moon", with the
-gap read as word 10 because word 10 is the one channel above that was never located. Every
-token in it is a valid BIP39 English word, so it looks like a real fragment. It is not
-confirmed: `tools/seedsearch.py` swept every BIP39 word into every position of those 11
+The message-in-a-bottle page on the East branch, which is open and needs no lock, prints five
+of them:
+
+| Position | Word |
+|---|---|
+| 1 | when |
+| 2 | you |
+| 3 | depart |
+| 4 | find |
+| 5 | mystery |
+
+Three consequences. First, the claim that all 12 words sit behind the three locks is wrong:
+at least 5 are on an open page, and the locks hold the rest rather than the whole seed.
+Second, the circulating fragment is genuine at least through word 5, in that order, which is
+why it is now worth chasing rather than dismissing. Third, words 6 to 12 should be looked for
+in the same visual form, numbered tags on a page, rather than as a steganographic payload in
+an image or an audio file. Every negative in analysis/tested.md that scanned for a hidden
+payload was looking for the wrong kind of thing.
+
+The circulating fragment reads "when you depart find mystery hunt gather whale blood ...
+virtual moon". Its first five words are now confirmed by the page above, so its tail is worth
+taking seriously too. The tail is still not confirmed, and does not derive the wallet: `tools/seedsearch.py` swept every BIP39 word into every position of those 11
 words, kept the 1,582 checksum-valid mnemonics, and tested them against 28 candidate
-passphrases, with no match (see analysis/tested.md). Two of its words, "virtual" and "moon",
-are the last two words of Hunt #1's own seed, which is the most likely explanation: the
-fragment is at least partly inherited Hunt #1 material rather than Hunt #2's answer. Treat it
-as unverified, and do not plan around needing only word 10.
+passphrases, and then again over the seven tail positions against 79 passphrases drawn from
+the Glimmer lyric, the band's other track titles, and the site's own vocabulary, with no
+match either time (see analysis/tested.md). Since words 1 to 5 are now certain, the error is
+in words 6 to 12 or in the passphrase, not at the start. "virtual" and "moon" are the last
+two words of Hunt #1's own seed, so the tail is the part most likely to be inherited noise.
+Treat words 6 to 12 as unknown and look for the pages that print them.

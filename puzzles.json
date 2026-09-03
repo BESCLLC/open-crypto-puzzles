@@ -2976,40 +2976,40 @@
         "certified_against": "the published account xpub, whose m/0/0 P2WPKH address equals the escrow; a known-wrong BIP39 test vector is also confirmed to produce NO MATCH. tools/seedsearch.py additionally certifies the BIP39-mnemonic-to-seed leg against the public 'abandon...about'/TREZOR seed vector and the BIP84 vector address bc1qcr8te4kr609gcawutmrza0j4xv80jy8z306fyu"
       },
       "difficulty_left": "insight",
-      "difficulty_note": "the 12 words and passphrase are locked behind 3 password-gated pages, each requiring a specific author-intended answer to a riddle rather than a decodable cipher; about 5,000 candidates have been tried across the 3 locks with 0 hits, none of them a certified exhaustive negative, and a circulating 11-word seed fragment was swept over every single missing word with no match",
+      "difficulty_note": "seed words 1 to 5 are printed in the open on one East page as numbered tags; the remaining words and the passphrase are not located, and the 3 password-gated pages are the likely place they sit, each requiring a specific author-intended answer to a riddle rather than a decodable cipher; about 5,000 candidates have been tried across the 3 locks with 0 hits, none of them a certified exhaustive negative, and a circulating 11-word seed fragment was swept over every single missing word with no match",
       "tested_total": {
-        "candidates": 49300,
-        "families": 8,
+        "candidates": 123800,
+        "families": 10,
         "certified": false
       },
       "leads": [
         {
           "rank": 1,
-          "title": "read the West riddle's 'unbridaled' as The Princess Bride, so the answer is the Dread Pirate Roberts",
-          "cost": "minutes",
+          "title": "re-walk every open page for numbered seed-word tags, North first",
+          "cost": "hours",
           "status": "open"
         },
         {
           "rank": 2,
-          "title": "answer the second half of the East branch's Gandalf line, the vision rather than the refusal",
+          "title": "answer the East riddle in Oz rather than Tolkien, since witchoftheeast is open on that branch",
           "cost": "minutes",
           "status": "open"
         },
         {
           "rank": 3,
-          "title": "read the South lock's 'Name 6' as the first-season credit 'and the rest'",
+          "title": "read the West riddle's 'unbridaled' as The Princess Bride, so the answer is the Dread Pirate Roberts",
           "cost": "minutes",
           "status": "open"
         },
         {
           "rank": 4,
-          "title": "reverse image search the LifeFlashBeforeEyes.mp4 clip stills",
-          "cost": "hours",
+          "title": "read the South lock's 'Name 6' as the first-season credit 'and the rest'",
+          "cost": "minutes",
           "status": "open"
         },
         {
           "rank": 5,
-          "title": "re-read the North branch against the whale wording in the circulating fragment",
+          "title": "reverse image search the LifeFlashBeforeEyes.mp4 clip stills",
           "cost": "hours",
           "status": "open"
         }
