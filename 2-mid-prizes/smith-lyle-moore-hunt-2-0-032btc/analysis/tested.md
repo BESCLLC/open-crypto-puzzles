@@ -21,8 +21,17 @@ not present them as proof the answer is not in the tested set.
 | Audio steganography on the public Glimmer master (Morse, reversed playback, LSB, spectrogram) | 1 audio file (48kHz/24-bit FLAC), 4 techniques | direct signal analysis | 0 match; audio matches the official master with no alternate mix found anywhere | not applicable (no known-good alternate-mix vector exists to test the harness against) | 2026-07-10 |
 | Instagram captions and post dates as page-password candidates | 80 posts plus story highlights | direct page-password submission of caption puns and dates | 0 match on any of the 3 locks | uncertified: same reason as the 3 locks above | 2026-07-18 |
 | North branch (`mwfaz` and the whale-themed pages) carries hidden words | full content of every page on the branch | direct read of page text, images, and buttons | confirmed 0 of 12 words; the branch ends on a static "coming soon" page | not applicable (a direct content read, not a guess) | 2026-07-20 |
+| Circulating fragment "when you depart find mystery hunt gather whale blood ... virtual moon" is the seed with one word missing | 24,576 insertions (2,048 BIP39 words at each of 12 positions), 1,582 checksum-valid mnemonics, 28 candidate passphrases, 44,296 derivations | `tools/seedsearch.py`, dependency-free BIP39/BIP32/BIP84/P2WPKH, both BIP84 and BIP44 account paths per candidate, 230 derivations/s | 0 match | yes: `--selftest` reproduces the BIP39 "abandon...about"/TREZOR seed vector, the BIP84 vector address `bc1qcr8te4kr609gcawutmrza0j4xv80jy8z306fyu` from the same mnemonic with an empty passphrase, and the published xpub's m/0/0 P2WPKH address as the escrow, and rejects the known-wrong test vector; separately, 25 random mnemonics under 3 passphrases derive the same BIP84 address in this script and in bip_utils, the library oracle.py uses | 2026-09-03 |
+| A single site-wide case rule for page passwords | 1 further known-good password on the entry chain | direct page-password submission | refuted a second time, in the other direction: the "Who is she?" answer `amphitrite` is accepted in lowercase, while `Gilligan` and `Ginger` need Title Case, so case is set per page and not per site | yes: `amphitrite` reproduced its accept | 2026-09-03 |
 
 Cumulative candidate count across the 3 open locks: about 5,000, 0 hits, all uncertified in
 the sense above. The site's gated-page mechanism itself is server-side (a real browser cannot
 bypass it by reading the page body before entering the password), which I confirmed directly
 rather than assumed.
+
+The seed sweep in the second-to-last row is the one certified negative in this folder. It
+covers exactly one shape: those 11 words, in that order, with one unknown BIP39 word inserted
+somewhere, under 28 passphrases. It does not cover a reordering of the 11, two or more
+missing words, or a passphrase outside the list in `tools/passphrases.txt`. What it does
+settle is that the fragment cannot be finished by supplying word 10 alone, which was the
+reason it looked worth chasing.

@@ -8,6 +8,34 @@ GPS coordinates; entering the latitude and then the longitude as consecutive pag
 opens a compass page, which displays four branch passwords in clear text: `north64`,
 `south64`, `east64`, and `west64`. From there the site forks into four branches.
 
+The entry chain, as re-walked on the live site on 2026-09-03:
+
+| Step | Page asks | Password |
+|---|---|---|
+| 1 | the EXIF latitude | `27756932` |
+| 2 | the EXIF longitude | `73511573` |
+| 3 | "Who is she?" | `amphitrite` |
+| 4 | the compass, which prints the four branch passwords | `north64` / `south64` / `east64` / `west64` |
+
+Step 3 is the answer to the entry line "I Be The Ruler of the Seven Seas": Amphitrite is
+Poseidon's wife. It is accepted in lowercase, which is why the case rule below is stated per
+page rather than per site.
+
+The branch chains, in the order their passwords are entered:
+
+| Branch | Passwords, entry to lock |
+|---|---|
+| South | `south64`, `electricfeel64`, `Gilligan`, `Jonas`, `Thurston`, `Lovey`, `Ginger`, then the locked `b3vye` |
+| East | `east64`, `east64`, `albatross`, then `semaphore` / `20000leagues` / `youshallpass47` on the middle pages, then the locked `c2ozw` |
+| West | `west64`, then the locked `wt1jy` |
+| North | `north64`, then a whale-themed chain ending on a static "coming soon" page |
+
+`electricfeel64` and `youshallpass47` are the two passwords that show the author's habit
+plainly: the first is a pun on an electric eel, the second inverts Gandalf's "you shall not
+pass" because the reader is in fact passing. Both carry a numeric suffix taken from a number
+printed on the page itself. That habit is the reason the three remaining answers are read as
+puns or planted details rather than as dictionary terms.
+
 Everything up to and including the branch fork is solved: I hold every password from the
 entry page through the compass page and through every page each branch passes before its
 final locked gate.
@@ -43,6 +71,11 @@ already known for every other open gate, the format of the three remaining locks
 - West (`wt1jy`) and East (`c2ozw`): lowercase, a single token with no spaces (matches every
   other open West/East page password, e.g. `albatross`, `semaphore`, `20000leagues`).
 
+These are per-branch observations, not a site-wide rule. The entry chain's `amphitrite` is
+lowercase while the South chain's `Gilligan` and `Ginger` are Title Case, so the author set
+the case page by page. A candidate that fits the reading but fails in the branch's usual case
+is worth one retry in the other case before it is written off.
+
 No password anywhere on the site I have opened carries a numeric suffix that is not directly
 derivable from the page's own content (a number visible in an image on that same page); no
 guess should add an arbitrary digit string.
@@ -68,3 +101,14 @@ author hides seed words, not as part of the live puzzle. Its seed was
 The practical conclusion: every carrier channel that is reachable without solving one of the
 three insight locks has been checked and is either empty (refuted) or inherited scaffolding
 from Hunt #1 that carries no new word. All 12 words are behind West, East, and South.
+
+One correction to that conclusion. A partial word list has been circulating for this hunt,
+reading "when you depart find mystery hunt gather whale blood ... virtual moon", with the
+gap read as word 10 because word 10 is the one channel above that was never located. Every
+token in it is a valid BIP39 English word, so it looks like a real fragment. It is not
+confirmed: `tools/seedsearch.py` swept every BIP39 word into every position of those 11
+words, kept the 1,582 checksum-valid mnemonics, and tested them against 28 candidate
+passphrases, with no match (see analysis/tested.md). Two of its words, "virtual" and "moon",
+are the last two words of Hunt #1's own seed, which is the most likely explanation: the
+fragment is at least partly inherited Hunt #1 material rather than Hunt #2's answer. Treat it
+as unverified, and do not plan around needing only word 10.
